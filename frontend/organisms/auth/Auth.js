@@ -21,7 +21,9 @@ export default function Auth({ navigation }) {
           onPress={() => navigation.navigate('SignUp')}
         />
         <View style={styles.signInContainer}>
-          <Text>Já está cadastrado? <Text style={styles.signInText}>Clique aqui!</Text></Text>
+          <Text>Já está cadastrado?<Text> </Text>
+            <Text onPress={() => navigation.navigate('LogIn')} style={styles.signInText}>Clique aqui!</Text>
+          </Text>
         </View>
       </View>
     </View>

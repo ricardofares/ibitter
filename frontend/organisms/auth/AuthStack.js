@@ -1,6 +1,7 @@
 import React from 'react';
 import Auth from './Auth';
 import SignUp from './SignUp';
+import LogIn from './LogIn';
 import GlobalStyles from '../../styles';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -22,6 +23,7 @@ export default function AuthStack() {
     >
       <Stack.Screen name="Auth" component={Auth} />
       <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="LogIn" component={LogIn} />
     </Stack.Navigator>
   );
 }
