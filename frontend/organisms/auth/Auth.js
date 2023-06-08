@@ -1,22 +1,25 @@
 import React from 'react';
+import GlobalStyles from '../../styles';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 
-export default function Auth() {
+export default function Auth({ navigation }) {Auth
   return (
     <View style={styles.mainContainer}>
       <View style={styles.headerContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={require('../assets/images/logo.png')}
+            source={require('../../assets/images/logo.png')}
             style={styles.icon}
           />
         </View>
         <Text style={styles.headerTitle}>Ibitter</Text>
-        <Text style={styles.headerSubtitle}>Desfrute de experiências que você proporciona.</Text>
       </View>
       <View style={styles.bodyContainer}>
         { /* @Todo: This TouchableOpacity should be transformed in an molecule. */}
-        <TouchableOpacity style={styles.buttonContainer}>
+        <TouchableOpacity 
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('SignUp')}
+        >
           <Text style={styles.buttonText}>Registre-se com seu E-mail</Text>
         </TouchableOpacity>
         <View style={styles.signInContainer}>
@@ -34,7 +37,7 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   headerContainer: {
-    flexGrow: 4,
+    flexGrow: 10,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -44,15 +47,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    marginTop: 48,
-    color: '#414143',
+    marginTop: 16,
+    color: GlobalStyles.primaryColor,
     fontSize: 48,
     fontWeight: 'bold',
   },
   headerSubtitle: {
     marginTop: 24,
-    opacity: 0.5,
-    color: '#414143',
+    opacity: 0.75,
+    color: GlobalStyles.primaryColor,
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -66,19 +69,20 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingTop: 16,
     paddingBottom: 16,
-    backgroundColor: '#414143',
+    backgroundColor: GlobalStyles.primaryColor,
     flexDirection: 'row',
     justifyContent: 'center',
     borderRadius: 10,
   },
   buttonText: {
-    color: 'white',
+    color: GlobalStyles.secondaryColor,
     fontWeight: 'bold',
   },
   signInContainer: {
     marginTop: 32,
   },
   signInText: {
+    color: GlobalStyles.primaryColor,
     textDecorationLine: 'underline',
     fontWeight: 'bold',
   },

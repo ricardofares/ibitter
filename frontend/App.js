@@ -1,14 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
-import Auth from './organisms/Auth';
+import { NavigationContainer } from '@react-navigation/native';
+import AuthStack from './organisms/auth/AuthStack';
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <Auth />
-      <StatusBar style="auto" />
-    </SafeAreaView>
+    <NavigationContainer>
+      <SafeAreaView style={styles.container}>
+        <AuthStack />
+        <StatusBar style="auto" />
+      </SafeAreaView>
+    </NavigationContainer>
   );
 }
 
