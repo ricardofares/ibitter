@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import GlobalStyles from '../../styles';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
+import axios from 'axios';
 import { StyleSheet, View, Text, Alert } from 'react-native';
 import { hasUppercaseLetter, hasLowercaseLetter, hasSymbol } from '../../utils';
 
-export default function SignUp() {
+export default function SignUp({ navigation }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,11 +48,49 @@ export default function SignUp() {
     setPassword(text);
   };
 
-  const onRegisterUser = () => {
+  const onRegisterUser = async () => {
+    // Validate each of the inputs needed for create an account.
     for (const validate of registerValidationCases(username, email, password)) {
       const checkResult = validate();
       if (checkResult.condition) {
         Alert.alert(checkResult.title, checkResult.message);
+        return;
+      }
+    }
+
+    try {
+      console.log('test');
+      const registerResult = await axios.post(`http://192.168.100.55:5000/signup`, {
+        username,
+        email,
+        password
+      });
+
+      if (registerResult.status === 204) {
+        Alert.alert('Cadastrado com Sucesso', 'Você foi cadastrado com sucesso em nossa plataforma.');
+
+        // Clear the inputs.
+        setUsername('');
+        setEmail('');
+        setPassword('');
+
+        // Push the `Log In` screen for the user log in into its account.
+        navigation.pop();
+      }
+    } catch (e) {
+      // Check if the back-end is offline. If so, then an alert will be shown to
+      // the user informing it.
+      if (e.message === 'Network Error') {
+        Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+        return;
+      }
+
+      const data = e.response.data;
+
+      // Check if an user with the specified email has already been registered. If so,
+      // an alert will be sent to the user informing it.
+      if (data.constraint && data.constraint === 'users_email_unique') {
+        Alert.alert('Usuário Existente', 'Parece que já existe um usuário com este e-mail.');
         return;
       }
     }
