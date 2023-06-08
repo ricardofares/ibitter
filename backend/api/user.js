@@ -17,29 +17,34 @@ module.exports = app => {
       });
     });
   };
-  
+
   /// \brief Creates an user in the database.
   ///
   /// \param req The HTTP request.
   /// \param res The HTTP response.
   const signUp = (req, res) => {
-    // Fetches the name, email and password from the request body.
-    const { name, email, password } = req.body;
+    // Fetches the username, email and password from the request body.
+    const { username, email, password } = req.body;
 
     // Hashes the password specified in the request body.
     hashPassword(password, hash => {
-      console.log(hash);
       // Inserts an user inside the database. If the user has been
       // inserted, then a success message is sent as the response.
       // Otherwise, an error message is sent.
       app.knex('users')
         .insert({
-          name,
+          username,
           email,
           password: hash,
         })
-        .then(_ => res.status(204).send())
-        .catch(err => res.status(400).json(err));
+        .then(_ => {
+          console.log(`User ${username} with e-mail ${email} has been registered successfully.`);
+          res.status(204).send();
+        })
+        .catch(err => {
+          console.warn(`User ${username} with e-mail ${email} has tried to register, but failed.`);
+          res.status(400).json(err);
+        });
     });
   };
 
