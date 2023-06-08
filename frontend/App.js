@@ -2,13 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import AuthStack from './organisms/auth/AuthStack';
+import Timeline from './organisms/timeline/Timeline';
 
 export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.container}>
-        <AuthStack />
+        <Timeline />
         <StatusBar style="auto" />
       </SafeAreaView>
     </NavigationContainer>
