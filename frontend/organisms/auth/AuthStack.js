@@ -13,6 +13,8 @@ export default function AuthStack() {
         headerShadowVisible: false,
         headerTitle: '',
         headerBackTitle: 'Voltar',
+        headerTintColor: 'black',
+        headerBackImageSource: require('../../assets/images/arrow-left.png'),
         contentStyle: {
           backgroundColor: GlobalStyles.secondaryColor,
         }
