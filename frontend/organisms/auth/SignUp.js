@@ -59,7 +59,6 @@ export default function SignUp({ navigation }) {
     }
 
     try {
-      console.log('test');
       const registerResult = await axios.post(`http://192.168.100.55:5000/signup`, {
         username,
         email,

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import GlobalStyles from '../../styles';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function Timeline() {
+	const { state } = useContext(IbitterContext);
 	const [currentTab, setCurrentTab] = useState('ForYou');
 
 	return (
@@ -12,29 +14,31 @@ export default function Timeline() {
 					style={styles.userIcon}
 					source={require('../../assets/images/Photo.png')}
 				/>
-				<Text style={styles.headerTitle}>Nome do Usuário</Text>
+				<Text style={styles.headerTitle}>{state.user.username || 'Username Placeholder'}</Text>
 				<Image
 					style={styles.sendIcon}
 					source={require('../../assets/images/send.png')}
 				/>
 			</View>
 			<View style={styles.navigatorContainer}>
-				<View style={styles.navigatorTabContainer}>
-					<Text
-						style={[styles.navigatorTabTitle, currentTab === 'ForYou' ? styles.navigatorActiveTabTitle : {}]}
-						onPress={() => setCurrentTab('ForYou')}
-					>
-						Selecionados
-					</Text>
-				</View>
-				<View style={styles.navigatorTabContainer}>
-					<Text style={[styles.navigatorTabTitle, currentTab === 'Following' ? styles.navigatorActiveTabTitle : {}]}
-						onPress={() => setCurrentTab('Following')}
-					>
-						Seguindo
-					</Text>
-				</View>
+				<TouchableWithoutFeedback onPress={() => setCurrentTab('ForYou')}>
+					<View style={styles.navigatorTabContainer}>
+						<Text style={[styles.navigatorTabTitle, currentTab === 'ForYou' ? styles.navigatorActiveTabTitle : {}]}>Selecionados</Text>
+					</View>
+				</TouchableWithoutFeedback>
+				<TouchableWithoutFeedback onPress={() => setCurrentTab('Following')}>
+					<View style={styles.navigatorTabContainer}>
+						<Text style={[styles.navigatorTabTitle, currentTab === 'Following' ? styles.navigatorActiveTabTitle : {}]}>
+							Seguindo
+						</Text>
+					</View>
+				</TouchableWithoutFeedback>
 			</View>
+			<TouchableOpacity style={{ position: 'absolute', top: '750%', left: '90%' }} activeOpacity={0.75}>
+				<View style={styles.addPostIconContainer}>
+					<Text style={styles.addPostIcon}>+</Text>
+				</View>
+			</TouchableOpacity>
 		</View>
 	);
 }
@@ -90,5 +94,23 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		color: 'black',
 	},
+	addPostIconContainer: {
+		position: 'absolute',
+		paddingTop: 8,
+		paddingBottom: 8,
+		paddingLeft: 16,
+		paddingRight: 16,
+		borderRadius: 50,
+		backgroundColor: 'black',
+		shadowColor: '#171717',
+		shadowOffset: { width: -2, height: 4 },
+		shadowOpacity: 0.2,
+		shadowRadius: 3,
+	},
+	addPostIcon: {
+		color: 'white',
+		fontSize: 32,
+	}
+
 
 });

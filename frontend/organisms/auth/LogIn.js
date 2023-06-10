@@ -1,22 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import GlobalStyles from '../../styles';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
+import { IbitterContext } from '../providers/IbitterProvider';
 import axios from 'axios';
 import { StyleSheet, View, Text, Alert } from 'react-native';
 
 export default function LogIn({ navigation }) {
+  const { dispatch } = useContext(IbitterContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const onLogIn = async () => {
     try {
+      // Contact the API to initiate the sign-in process.
+      // Send a POST request to the specified URL, providing the email and password for authentication.
       const logInResult = await axios.post('http://192.168.100.55:5000/signin', {
         email,
         password,
       });
 
-      // @Todo: Must navigate to the log-in page.
+      // Dispatch an action to update the user information after receiving the response from the API.
+      // The action type 'DO_LOGIN' is used to identify the login action.
+      // The payload contains the user information retrieved from the API response.
+      dispatch({
+        type: 'DO_LOGIN',
+        payload: {
+          user: {
+            ...logInResult.data
+          }
+        }
+      });
     } catch (e) {
       // Check if the back-end is offline. If so, then an alert will be shown to
       // the user informing it.
