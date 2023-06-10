@@ -1,4 +1,29 @@
 module.exports = app => {
+
+  const load = async (req, res) => {
+    // Checks if the username has not been specified.
+    if (!req.query.username) {
+      return res.status(400).json({
+        code: "E008",
+        message: "O usuário da consulta de postagem não foi especificado.",
+      });
+    }
+
+    // Fetches the username.
+    const { username } = req.query;
+
+    const posts = await app.knex.select()
+      .from('posts')
+      .where('username', username)
+      .orderBy('posted_at', 'desc');
+
+    return res.status(200).json(posts);
+  };
+
+  /// \brief Saves a post in the database.
+  /// 
+  /// \param req The HTTP request.
+  /// \param res The HTTP response.
   const save = (req, res) => {
     // Checks if the username has not been specified.
     if (!req.body.username) {
@@ -42,5 +67,5 @@ module.exports = app => {
       });
   };
 
-  return { save };
+  return { save, load };
 };

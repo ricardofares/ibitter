@@ -8,4 +8,7 @@ module.exports = app => {
 
   /// \brief Creates a route for user to post.
   app.post('/newpost', app.api.post.save);
+
+  /// \brief Create a routte for user to fetch posts.
+  app.get('/posts', app.api.post.load);
 };
