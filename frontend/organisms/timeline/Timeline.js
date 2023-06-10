@@ -42,6 +42,28 @@ export default function Timeline({ navigation }) {
 		loadAllPosts();
 	}, [state.lastTimelineUpdate]);
 
+	const renderPost = post =>
+		<View style={{ marginTop: 16 }}>
+			<View style={styles.postHeaderContainer}>
+				<Image
+					style={styles.userIcon}
+					source={require('../../assets/images/Photo.png')}
+				/>
+				<Text style={styles.postHeaderUsername}>{post.username}</Text>
+			</View>
+			<Text style={styles.postContent}>{post.content}</Text>
+			<View style={styles.postStatisticsContainer}>
+				<View style={styles.postStatistics}>
+					<Image
+						style={styles.postStatisticsIcon}
+						source={require('../../assets/images/heart.png')}
+					/>
+					<Text>{post.likes}</Text>
+				</View>
+			</View>
+		</View>;
+
+
 	return (
 		<View style={styles.mainContainer}>
 			<View style={styles.headerContainer}>
@@ -69,24 +91,21 @@ export default function Timeline({ navigation }) {
 					</View>
 				</TouchableWithoutFeedback>
 			</View>
-
 			<FlatList
 				style={{ height: '100%' }}
 				data={posts}
-				renderItem={({ item }) => <Text>{item.content}</Text>}
-				ListHeaderComponent={
-					<TouchableOpacity
-						style={{ position: 'absolute', marginTop: '160%', left: '85%' }}
-						activeOpacity={0.75}
-						onPress={() => navigation.navigate('CreatePost')}
-					>
-						<View style={styles.addPostIconContainer}>
-							<Text style={styles.addPostIcon}>+</Text>
-						</View>
-					</TouchableOpacity>
-				}
-				stickyHeaderIndices={[0]}
+				renderItem={({ item }) => renderPost(item)}
+
 			/>
+			<TouchableOpacity
+				style={{ position: 'absolute', marginTop: '185%', left: '90%' }}
+				activeOpacity={0.75}
+				onPress={() => navigation.navigate('CreatePost')}
+			>
+				<View style={styles.addPostIconContainer}>
+					<Text style={styles.addPostIcon}>+</Text>
+				</View>
+			</TouchableOpacity>
 		</View>
 	);
 }
@@ -158,5 +177,28 @@ const styles = StyleSheet.create({
 	addPostIcon: {
 		color: 'white',
 		fontSize: 32,
+	},
+	postHeaderContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	postHeaderUsername: {
+		fontWeight: 'bold',
+		marginLeft: 8,
+	},
+	postContent: {
+		marginTop: 8,
+	},
+	postStatisticsContainer: {
+		marginTop: 8,
+	},
+	postStatistics: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	postStatisticsIcon: {
+		width: 24,
+		height: 24,
+		marginRight: 8,
 	}
 });
