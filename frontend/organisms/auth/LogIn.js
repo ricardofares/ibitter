@@ -55,12 +55,12 @@ export default function LogIn({ navigation }) {
   };
 
   return (
-    <IbitterStackScreen navigation={navigation}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Bem-vindo, de volta!</Text>
-        <Text style={styles.headerSubtitle}>Entre em sua conta e veja o que está acontecendo.</Text>
-      </View>
-      <View style={{ marginTop: 32 }}>
+    <IbitterStackScreen
+      navigation={navigation}
+      headerTitle="Bem-vindo, de volta!"
+      headerSubtitle="Entre em sua conta e veja o que está acontecendo"
+    >
+      <View>
         <Input settings={{ inputMode: 'email', onChangeText: text => setEmail(text), value: email }} label="E-mail" />
         <Input style={{ marginTop: 12 }} settings={{ secureTextEntry: true, onChangeText: text => setPassword(text), value: password }} label="Senha" />
       </View>
@@ -83,20 +83,5 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingLeft: GlobalStyles.paddingLeft,
     paddingRight: GlobalStyles.paddingRight,
-  },
-  headerContainer: {
-  },
-  headerTitle: {
-    marginTop: 16,
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: GlobalStyles.primaryColor,
-  },
-  headerSubtitle: {
-    marginTop: 8,
-    width: '80%',
-    opacity: 0.5,
-    fontSize: 16,
-    color: GlobalStyles.primaryColor,
   },
 });

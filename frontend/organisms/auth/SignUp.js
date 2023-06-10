@@ -104,24 +104,24 @@ export default function SignUp({ navigation }) {
   };
 
   return (
-    <IbitterStackScreen navigation={navigation}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Registre-se</Text>
-        <Text style={styles.headerSubtitle}>Crie uma conta para que você possa desfrutar de nossas histórias.</Text>
-        <View style={{ marginTop: 32 }}>
-          <Input label="Usuário" settings={{ onChangeText: onUsernameChange, value: username }} />
-          <Text style={styles.adviseText}>O nome do usuário deve conter mais que 6 caracteres.</Text>
-          <Input style={{ marginTop: 12 }} settings={{ inputMode: 'email', onChangeText: onEmailChange, value: email }} label="E-mail" />
-          <Input style={{ marginTop: 12 }} settings={{ secureTextEntry: true, onChangeText: onPasswordChange, value: password }} label="Senha" />
-          <Text style={styles.adviseText}>Sua senha deve conter 8 ou mais caracteres & deve conter uma mistura de caracteres maiúsculos e minúsculos, números e símbolos.</Text>
-        </View>
-        <View style={{ marginTop: 32 }}>
-          <Button text="Criar uma conta" onPress={onRegisterUser} />
-          <Text style={styles.signUpText}>Criando sua conta, você está aceitando nossos<Text> </Text>
-            <Text style={styles.signUpTextEmphasize}>Termos de Uso</Text> e nossa<Text> </Text>
-            <Text style={styles.signUpTextEmphasize}>Política de Privacidade</Text>
-          </Text>
-        </View>
+    <IbitterStackScreen
+      navigation={navigation}
+      headerTitle="Registre-se"
+      headerSubtitle="Crie uma conta para que você possa desfrutar de nossas histórias."
+    >
+      <View>
+        <Input label="Usuário" settings={{ onChangeText: onUsernameChange, value: username }} />
+        <Text style={styles.adviseText}>O nome do usuário deve conter mais que 6 caracteres.</Text>
+        <Input style={{ marginTop: 12 }} settings={{ inputMode: 'email', onChangeText: onEmailChange, value: email }} label="E-mail" />
+        <Input style={{ marginTop: 12 }} settings={{ secureTextEntry: true, onChangeText: onPasswordChange, value: password }} label="Senha" />
+        <Text style={styles.adviseText}>Sua senha deve conter 8 ou mais caracteres & deve conter uma mistura de caracteres maiúsculos e minúsculos, números e símbolos.</Text>
+      </View>
+      <View style={{ marginTop: 32 }}>
+        <Button text="Criar uma conta" onPress={onRegisterUser} />
+        <Text style={styles.signUpText}>Criando sua conta, você está aceitando nossos<Text> </Text>
+          <Text style={styles.signUpTextEmphasize}>Termos de Uso</Text> e nossa<Text> </Text>
+          <Text style={styles.signUpTextEmphasize}>Política de Privacidade</Text>
+        </Text>
       </View>
     </IbitterStackScreen>
   );
