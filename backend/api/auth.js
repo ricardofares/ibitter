@@ -48,17 +48,16 @@ module.exports = app => {
       // Creates the token's payload.
       const payload = {
         id: user.id,
-        name: user.name,
+        username: user.username,
         email: user.email
       };
 
       res.json({
-        name: user.name,
-        email: user.email,
+        ...payload,
         token: jwt.encode(payload, process.env.AUTH_SECRET),
       });
     });
   };
-  
+
   return { signIn };
 };
