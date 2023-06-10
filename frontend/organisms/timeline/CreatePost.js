@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
 import GlobalStyles from '../../styles';
-import { StyleSheet, View, Text } from 'react-native';
+import axios from 'axios';
+import { StyleSheet, Text, Alert } from 'react-native';
+import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function CreatePost({ navigation }) {
+  const { state, dispatch } = useContext(IbitterContext);
   const [content, setContent] = useState('');
 
   /// \brief Updates the content whenever the content textt input changes.
@@ -24,6 +27,34 @@ export default function CreatePost({ navigation }) {
     setContent(text);
   };
 
+  const onCreatePost = async () => {
+    try {
+      const postResponse = await axios.post(`http://192.168.100.55:5000/newpost`, {
+        username: state.user.username,
+        content: content
+      });
+
+      // Check if the post has been created successfully.
+      if (postResponse.status === 204) {
+        // Update the timeline.
+        dispatch({
+          type: 'DO_TIMELINE_UPDATE',
+        });
+
+        Alert.alert('Postagem Realizada', 'A sua postagem foi realizada com sucesso.');
+        navigation.pop();
+        return;
+      }
+    } catch (e) {
+      // Check if the back-end is offline. If so, then an alert will be shown to
+      // the user informing it.
+      if (e.message === 'Network Error') {
+        Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+        return;
+      }
+    }
+  };
+
   return (
     <IbitterStackScreen
       navigation={navigation}
@@ -31,6 +62,7 @@ export default function CreatePost({ navigation }) {
       headerSubtitle="Compartilhe sua experiência conosco!"
       headerComponent={
         <Button
+          onPress={onCreatePost}
           text="Postar"
           style={{
             width: '25%',

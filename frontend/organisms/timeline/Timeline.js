@@ -1,11 +1,35 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import GlobalStyles from '../../styles';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import axios from 'axios';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function Timeline({ navigation }) {
 	const { state } = useContext(IbitterContext);
+	const [posts, setPosts] = useState([]);
 	const [currentTab, setCurrentTab] = useState('ForYou');
+
+	useEffect(() => {
+		const loadPosts = async () => {
+			try {
+				const postResponse = await axios.get(`http://192.168.100.55:5000/posts?username=${state.user.username}`);
+
+				// Updates the posts.
+				setPosts(postResponse.data);
+			} catch (e) {
+				// Check if the back-end is offline. If so, then an alert will be shown to
+				// the user informing it.
+				if (e.message === 'Network Error') {
+					Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+					return;
+				}
+			}
+
+		};
+
+		/// \brief Load the posts from the database using the API.
+		loadPosts();
+	}, [state.lastTimelineUpdate]);
 
 	return (
 		<View style={styles.mainContainer}>
@@ -34,15 +58,24 @@ export default function Timeline({ navigation }) {
 					</View>
 				</TouchableWithoutFeedback>
 			</View>
-			<TouchableOpacity
-				style={{ position: 'absolute', top: '750%', left: '90%' }}
-				activeOpacity={0.75}
-				onPress={() => navigation.navigate('CreatePost')}
-			>
-				<View style={styles.addPostIconContainer}>
-					<Text style={styles.addPostIcon}>+</Text>
-				</View>
-			</TouchableOpacity>
+
+			<FlatList
+				style={{ height: '100%' }}
+				data={posts}
+				renderItem={({ item }) => <Text>{item.content}</Text>}
+				ListHeaderComponent={
+					<TouchableOpacity
+						style={{ position: 'absolute', marginTop: '160%', left: '85%' }}
+						activeOpacity={0.75}
+						onPress={() => navigation.navigate('CreatePost')}
+					>
+						<View style={styles.addPostIconContainer}>
+							<Text style={styles.addPostIcon}>+</Text>
+						</View>
+					</TouchableOpacity>
+				}
+				stickyHeaderIndices={[0]}
+			/>
 		</View>
 	);
 }

@@ -14,6 +14,15 @@ const defaultState = {
 	/// This property is initially set to `undefined` and gets updated with the user information
 	/// once it is retrieved from the database during the login process.
 	user: undefined,
+
+	/// \brief Represents the datetime of the last timeline update.
+	///
+	/// This property holds the timestamp indicating the datetime of the most recent timeline update.
+	/// Initially, it is set to `undefined` to signify that no update has occurred yet.
+	///
+	/// \remarks The value of this property gets updated whenever the timeline data is refreshed or modified.
+	///				   It can be used to track the timing of updates and synchronize the application's behavior accordingly.
+	lastTimelineUpdate: undefined,
 };
 
 const actions = {
@@ -23,7 +32,14 @@ const actions = {
 			isLoggedIn: true,
 			user: payload.user
 		};
-	}
+	},
+	'DO_TIMELINE_UPDATE': (state, payload) => {
+		console.log('timeline update');
+		return {
+			...state,
+			lastTimelineUpdate: new Date(),
+		}
+	},
 };
 
 /// \brief The `IbitterContext` represents the context object used for sharing data within the Ibitter
