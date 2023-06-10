@@ -5,4 +5,7 @@ module.exports = app => {
 
   /// \brief Creates a route for user to sign-in.
   app.post('/signin', app.api.auth.signIn);
+
+  /// \brief Creates a route for user to post.
+  app.post('/newpost', app.api.post.save);
 };

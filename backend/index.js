@@ -16,9 +16,10 @@ const cors = require('cors');
 /// \brief Loads the database query builder.
 const knex = require('./config/db.js')
 
-/// \brief Loads the User and Auth API.
+/// \brief Loads the User, Auth and Post API.
 const userAPI = require('./api/user.js')(app);
 const authAPI = require('./api/auth.js')(app);
+const postAPI = require('./api/post.js')(app);
 
 // Update the application properties in `app` to be used
 // outside this file.
@@ -26,6 +27,7 @@ app.knex = knex;
 app.api = {
   user: userAPI,
   auth: authAPI,
+  post: postAPI
 };
 
 // Adds a middleware that only parsers `json`.
