@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import GlobalStyles from '../../styles';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
+import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import { IbitterContext } from '../providers/IbitterProvider';
 import axios from 'axios';
 import { StyleSheet, View, Text, Alert } from 'react-native';
@@ -54,7 +55,7 @@ export default function LogIn({ navigation }) {
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <IbitterStackScreen navigation={navigation}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Bem-vindo, de volta!</Text>
         <Text style={styles.headerSubtitle}>Entre em sua conta e veja o que está acontecendo.</Text>
@@ -74,7 +75,7 @@ export default function LogIn({ navigation }) {
           </Text>
         </Text>
       </View>
-    </View>
+    </IbitterStackScreen>
   );
 }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import GlobalStyles from '../../styles';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
+import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import axios from 'axios';
 import { StyleSheet, View, Text, Alert } from 'react-native';
 import { hasUppercaseLetter, hasLowercaseLetter, hasSymbol } from '../../utils';
@@ -103,7 +104,7 @@ export default function SignUp({ navigation }) {
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <IbitterStackScreen navigation={navigation}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Registre-se</Text>
         <Text style={styles.headerSubtitle}>Crie uma conta para que você possa desfrutar de nossas histórias.</Text>
@@ -122,7 +123,7 @@ export default function SignUp({ navigation }) {
           </Text>
         </View>
       </View>
-    </View>
+    </IbitterStackScreen>
   );
 }
 

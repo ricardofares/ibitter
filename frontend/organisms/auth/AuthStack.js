@@ -11,11 +11,7 @@ export default function AuthStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShadowVisible: false,
-        headerTitle: '',
-        headerBackTitle: 'Voltar',
-        headerTintColor: 'black',
-        headerBackImageSource: require('../../assets/images/arrow-left.png'),
+        headerShown: false,
         contentStyle: {
           backgroundColor: GlobalStyles.secondaryColor,
         }

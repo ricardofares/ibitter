@@ -3,7 +3,7 @@ import GlobalStyles from '../../styles';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 
-export default function Timeline() {
+export default function Timeline({ navigation }) {
 	const { state } = useContext(IbitterContext);
 	const [currentTab, setCurrentTab] = useState('ForYou');
 
@@ -34,7 +34,11 @@ export default function Timeline() {
 					</View>
 				</TouchableWithoutFeedback>
 			</View>
-			<TouchableOpacity style={{ position: 'absolute', top: '750%', left: '90%' }} activeOpacity={0.75}>
+			<TouchableOpacity
+				style={{ position: 'absolute', top: '750%', left: '90%' }}
+				activeOpacity={0.75}
+				onPress={() => navigation.navigate('CreatePost')}
+			>
 				<View style={styles.addPostIconContainer}>
 					<Text style={styles.addPostIcon}>+</Text>
 				</View>
