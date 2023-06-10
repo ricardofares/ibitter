@@ -10,15 +10,26 @@ export default function Timeline({ navigation }) {
 	const [currentTab, setCurrentTab] = useState('ForYou');
 
 	useEffect(() => {
-		const loadPosts = async () => {
+		/// \brief Loads all the posts from the database using the API.
+		///
+		/// This function sends a GET request to the specified API endpoint
+		/// to fetch all the posts stored in the database.
+		///
+		/// Upon successful retrieval, the received post data is used to update the state of the component
+		/// by calling the `setPosts` function with the fetched data.
+		///
+		/// In case of any errors, the function checks if the backend is offline by examining the error message.
+		/// If the error message indicates a network error, an alert is shown to the user, notifying them of the
+		/// server unavailability.
+		const loadAllPosts = async () => {
 			try {
-				const postResponse = await axios.get(`http://192.168.100.55:5000/posts?username=${state.user.username}`);
+				// Send a GET request to the API endpoint to retrieve all the posts
+				const postResponse = await axios.get(`http://192.168.100.55:5000/posts`);
 
-				// Updates the posts.
+				// Update the state of the component with the received post data.
 				setPosts(postResponse.data);
 			} catch (e) {
-				// Check if the back-end is offline. If so, then an alert will be shown to
-				// the user informing it.
+				// Display an alert to the user informing them about the server being offline.
 				if (e.message === 'Network Error') {
 					Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
 					return;
@@ -27,8 +38,8 @@ export default function Timeline({ navigation }) {
 
 		};
 
-		/// \brief Load the posts from the database using the API.
-		loadPosts();
+		// Call the loadAllPosts function to fetch and load all the posts from the database.
+		loadAllPosts();
 	}, [state.lastTimelineUpdate]);
 
 	return (
@@ -148,6 +159,4 @@ const styles = StyleSheet.create({
 		color: 'white',
 		fontSize: 32,
 	}
-
-
 });
