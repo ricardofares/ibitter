@@ -2,7 +2,7 @@ import React from 'react';
 import GlobalStyles from '../../styles';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback } from 'react-native';
 
-export default function IbitterStackScreen({ children, navigation, headerTitle, headerSubtitle }) {
+export default function IbitterStackScreen({ children, navigation, headerTitle, headerSubtitle, headerComponent }) {
   return (
     <View style={styles.mainContainer}>
       <TouchableWithoutFeedback onPress={() => navigation.pop()}>
@@ -12,6 +12,7 @@ export default function IbitterStackScreen({ children, navigation, headerTitle, 
             style={styles.stackScreenBackIcon}
           />
           <Text style={{ fontWeight: 'bold' }}>Voltar</Text>
+          {headerComponent}
         </View>
       </TouchableWithoutFeedback>
       {headerTitle ?

@@ -5,7 +5,8 @@ import { StyleSheet, View, Text, TextInput } from 'react-native';
 export default function Input({ label, settings, style }) {
   return (
     <View style={[style, styles.textInputContainer]}>
-      <Text style={styles.textInputLabel}>{label}</Text>
+      <Text style={[styles.textInputLabel,
+      settings.multiline && settings.multiline == true ? { top: 5 } : {}]}>{label}</Text>
       <TextInput {...settings} style={styles.textInput} />
     </View>
   );

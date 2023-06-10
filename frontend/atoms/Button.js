@@ -2,9 +2,12 @@ import React from 'react';
 import GlobalStyles from '../styles';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-export default function Button({ text, onPress }) {
+export default function Button({ text, style, onPress, disabled }) {
   return (
-    <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.buttonContainer, style, disabled ? { opacity: 0.5 } : {}]}
+      onPress={onPress}
+    >
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );
