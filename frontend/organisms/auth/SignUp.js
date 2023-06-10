@@ -88,10 +88,17 @@ export default function SignUp({ navigation }) {
       const data = e.response.data;
 
       // Check if an user with the specified email has already been registered. If so,
-      // an alert will be sent to the user informing it.
-      if (data.constraint && data.constraint === 'users_email_unique') {
-        Alert.alert('Usuário Existente', 'Parece que já existe um usuário com este e-mail.');
-        return;
+      // an alert will be sent to the user informing it
+      // Check if a database constraint has not been followed.
+      if (data.constraint) {
+        // Check if the email has been previously used.
+        if (data.constraint === 'users_email_unique') {
+          Alert.alert('Usuário Existente', 'Este e-mail já está sendo utilizado.');
+          return;
+        } else if (data.constraint === 'users_username_unique') {
+          Alert.alert('Usuário Existente', 'Este nome de usuário já está sendo utilizado.');
+          return;
+        }
       }
     }
   };
