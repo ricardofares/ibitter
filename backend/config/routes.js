@@ -13,5 +13,6 @@ module.exports = app => {
   app.get('/posts', app.api.post.load);
 
   /// \brief Create a route for user to like posts.
-  app.post('/newlike', app.api.likes.save);
+  app.post('/addlike', app.api.likes.add);
+  app.post('/removelike', app.api.likes.remove);
 };
