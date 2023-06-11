@@ -38,7 +38,6 @@ export default function Timeline({ navigation }) {
               post.i_liked = true;
         }
 
-        console.log(postResponse.data);
         // Update the state of the component with the received post data.
         setPosts(postResponse.data);
       } catch (e) {
@@ -56,13 +55,14 @@ export default function Timeline({ navigation }) {
   }, [state.lastTimelineUpdate]);
 
   const renderPost = post =>
-    <View style={{ marginTop: 16 }}>
+    <View style={styles.postContainer}>
       <View style={styles.postHeaderContainer}>
         <Image
           style={styles.userIcon}
           source={require('../../assets/images/Photo.png')}
         />
-        <Text style={styles.postHeaderUsername}>{post.username} {timeDiff(post.posted_at, new Date())}</Text>
+        <Text style={styles.postHeaderUsername}>{post.username}</Text>
+        <Text style={styles.postHeaderTime}>&#8226; {timeDiff(post.posted_at, new Date())}</Text>
       </View>
       <Text style={styles.postContent}>{post.content}</Text>
       <View style={styles.postStatisticsContainer}>
@@ -88,7 +88,7 @@ export default function Timeline({ navigation }) {
           style={styles.userIcon}
           source={require('../../assets/images/Photo.png')}
         />
-        <Text style={styles.headerTitle}>{state.user.username || 'Username Placeholder'}</Text>
+        <Text style={styles.headerTitle}>@{state.user.username || 'Username Placeholder'}</Text>
         <Image
           style={styles.sendIcon}
           source={require('../../assets/images/send.png')}
@@ -115,7 +115,7 @@ export default function Timeline({ navigation }) {
 
       />
       <TouchableOpacity
-        style={{ position: 'absolute', marginTop: '185%', left: '90%' }}
+        style={{ position: 'absolute', marginTop: '180%', left: '85%' }}
         activeOpacity={0.75}
         onPress={() => navigation.navigate('CreatePost')}
       >
@@ -129,10 +129,11 @@ export default function Timeline({ navigation }) {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    paddingLeft: GlobalStyles.paddingLeft,
-    paddingRight: GlobalStyles.paddingRight,
+
   },
   headerContainer: {
+    paddingLeft: GlobalStyles.paddingLeft,
+    paddingRight: GlobalStyles.paddingRight,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -195,6 +196,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 32,
   },
+  postContainer: {
+    marginTop: 16,
+    paddingLeft: GlobalStyles.paddingLeft,
+    paddingRight: GlobalStyles.paddingRight,
+    paddingBottom: 16,
+    borderBottomWidth: 5,
+    borderColor: '#f0f0f0',
+  },
   postHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -202,6 +211,10 @@ const styles = StyleSheet.create({
   postHeaderUsername: {
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  postHeaderTime: {
+    marginLeft: 8,
+    color: '#a0a0a0',
   },
   postContent: {
     marginTop: 8,

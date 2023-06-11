@@ -8,11 +8,24 @@ import { StyleSheet, View, Text, Alert } from 'react-native';
 import { hasUppercaseLetter, hasLowercaseLetter, hasSymbol } from '../../utils';
 
 export default function SignUp({ navigation }) {
+  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  /// \brief Updates tthe username whenever the username text input changes.
+  /// \brief Updates the name whenever thee name teext input changes.
+  ///
+  /// This function acts as a middleware that validates the `name` input
+  /// and updates the name accordingly.
+  ///
+  /// \param text The input text obtained from the `name` text input component.
+  const onNameChange = text => {
+    // Updates the name state with the provided input text. In this case,
+    // there is no name validation.
+    setName(text);
+  };
+
+  /// \brief Updates the username whenever the username text input changes.
   ///
   /// This function acts as a middleware that validates the `username` input
   /// and updates the username accordingly.
@@ -61,6 +74,7 @@ export default function SignUp({ navigation }) {
 
     try {
       const registerResult = await axios.post(`http://192.168.100.55:5000/signup`, {
+        name,
         username,
         email,
         password
@@ -70,6 +84,7 @@ export default function SignUp({ navigation }) {
         Alert.alert('Cadastrado com Sucesso', 'Você foi cadastrado com sucesso em nossa plataforma.');
 
         // Clear the inputs.
+        setName('');
         setUsername('');
         setEmail('');
         setPassword('');
@@ -110,8 +125,9 @@ export default function SignUp({ navigation }) {
       headerSubtitle="Crie uma conta para que você possa desfrutar de nossas histórias."
     >
       <View>
-        <Input label="Usuário" settings={{ onChangeText: onUsernameChange, value: username }} />
-        <Text style={styles.adviseText}>O nome do usuário deve conter mais que 6 caracteres.</Text>
+        <Input label="Nome" settings={{ onChangeText: onNameChange, value: name }} />
+        <Input style={{ marginTop: 12 }} label="Usuário" settings={{ onChangeText: onUsernameChange, value: username }} />
+        <Text style={styles.adviseText}>O usuário deve conter mais que 6 caracteres.</Text>
         <Input style={{ marginTop: 12 }} settings={{ inputMode: 'email', onChangeText: onEmailChange, value: email }} label="E-mail" />
         <Input style={{ marginTop: 12 }} settings={{ secureTextEntry: true, onChangeText: onPasswordChange, value: password }} label="Senha" />
         <Text style={styles.adviseText}>Sua senha deve conter 8 ou mais caracteres & deve conter uma mistura de caracteres maiúsculos e minúsculos, números e símbolos.</Text>

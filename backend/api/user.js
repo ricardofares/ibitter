@@ -24,7 +24,7 @@ module.exports = app => {
   /// \param res The HTTP response.
   const signUp = (req, res) => {
     // Fetches the username, email and password from the request body.
-    const { username, email, password } = req.body;
+    const { name, username, email, password } = req.body;
 
     // Hashes the password specified in the request body.
     hashPassword(password, hash => {
@@ -33,6 +33,7 @@ module.exports = app => {
       // Otherwise, an error message is sent.
       app.knex('users')
         .insert({
+          name,
           username,
           email,
           password: hash,
