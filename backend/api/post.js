@@ -3,18 +3,31 @@ module.exports = app => {
   const load = async (req, res) => {
     let posts = [];
 
-    if (req.query.username) {
-      // Fetches the username.
-      const { username } = req.query;
+    // Checks if the username has not been specified in the query parameters.
+    // If so, a 400 Bad Request response error is returned.
+    if (!req.query.username) {
+      return res.status(400).json({
+        code: "E010",
+        message: "Usuário não especificado para consulta de postagens.",
+      });
+    }
 
-      posts = await app.knex.select()
+    const { username } = req.query;
+
+    if (req.query.myPosts && req.query.myPosts == 'true') {
+      posts = await app.knex
+        .select(app.knex.raw(`posts.*, COALESCE(likes.username, '') = '${username}' AS i_liked`))
         .from('posts')
-        .where('username', username)
-        .orderBy('posted_at', 'desc');
+        .leftJoin('likes', 'posts.id', 'likes.post_id')
+        .whereRaw(`(likes.username IS NULL OR likes.username = '${username}') AND posts.username = '${username}'`)
+        .orderBy('posts.posted_at', 'desc');
     } else {
-      posts = await app.knex.select()
+      posts = await app.knex
+        .select(app.knex.raw(`posts.*, COALESCE(likes.username, '') = '${username}' AS i_liked`))
         .from('posts')
-        .orderBy('posted_at', 'desc');
+        .leftJoin('likes', 'posts.id', 'likes.post_id')
+        .whereRaw(`likes.username IS NULL OR likes.username = '${username}'`)
+        .orderBy('posts.posted_at', 'desc');
     }
 
     return res.status(200).json(posts);

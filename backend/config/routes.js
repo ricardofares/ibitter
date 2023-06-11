@@ -9,6 +9,9 @@ module.exports = app => {
   /// \brief Creates a route for user to post.
   app.post('/newpost', app.api.post.save);
 
-  /// \brief Create a routte for user to fetch posts.
+  /// \brief Create a route for user to fetch posts.
   app.get('/posts', app.api.post.load);
+
+  /// \brief Create a route for user to like posts.
+  app.post('/newlike', app.api.likes.save);
 };
