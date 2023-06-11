@@ -1,24 +1,19 @@
+const messages = require('../config/messages.js');
+
 module.exports = app => {
 
   const add = async (req, res) => {
     // Check if the username of the user who has liked a post has not been specified.
     // If the username is missing in the request body, return a 400 Bad Request response
     // with an error code and message indicating that the user is not specified.
-    if (!req.body.username) {
-      return res.status(400).json({
-        code: "E008",
-        message: "Usuário não especificado.",
-      });
-    }
+    if (!req.body.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
     // Check if the post identifier of the post which the user has liked has not been specified.
     // If the post identifier is missing in the request body, return a 400 Bad Request response
     // with an error code and messagee indicating that the post identifier is not specified.
     if (!req.body.postId) {
-      return res.status(400).json({
-        code: "E009",
-        message: "Identificador da postagem não especificado.",
-      });
+      return res.status(400).json(messages['POST_IDENTIFIER_NOT_SPECIFIED']);
     }
 
     const { username, postId } = req.body;
@@ -52,22 +47,14 @@ module.exports = app => {
     // Check if the username of the user who has liked a post has not been specified.
     // If the username is missing in the request body, return a 400 Bad Request response
     // with an error code and message indicating that the user is not specified.
-    if (!req.body.username) {
-      return res.status(400).json({
-        code: "E008",
-        message: "Usuário não especificado.",
-      });
-    }
+    if (!req.body.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
     // Check if the post identifier of the post which the user has liked has not been specified.
     // If the post identifier is missing in the request body, return a 400 Bad Request response
     // with an error code and messagee indicating that the post identifier is not specified.
-    if (!req.body.postId) {
-      return res.status(400).json({
-        code: "E009",
-        message: "Identificador da postagem não especificado.",
-      });
-    }
+    if (!req.body.postId)
+      return res.status(400).json(messages['POST_IDENTIFIER_NOT_SPECIFIED']);
 
     const { username, postId } = req.body;
 
@@ -96,5 +83,25 @@ module.exports = app => {
 
   };
 
-  return { add, remove };
+  const get = async (req, res) => {
+    // Check if the user has not been specified. If so, a 400 Bad Response
+    // HTTP error is returned, indcating them about the error.
+    if (!req.query.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
+
+    const { username } = req.query;
+
+    try {
+      const likesResponse = await app.knex('likes')
+        .where('username', '=', username);
+
+      return res.status(200).json(likesResponse);
+    } catch (e) {
+      console.warn(`Username ${username} has tried to query its likes, but failed.`);
+
+      return res.status(400).json(err);
+    }
+  };
+
+  return { add, remove, get };
 };

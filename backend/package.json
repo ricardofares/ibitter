@@ -18,5 +18,8 @@
     "start": "node index.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "moment": "^2.29.4"
+  }
 }
