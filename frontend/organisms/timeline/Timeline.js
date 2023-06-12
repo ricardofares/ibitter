@@ -65,7 +65,11 @@ export default function Timeline({ navigation }) {
         <Text style={styles.postHeaderUsername}>{post.username}</Text>
         <Text style={styles.postHeaderTime}>&#8226; {timeDiff(post.posted_at, new Date())}</Text>
       </View>
-      <Text style={styles.postContent}>{post.content}</Text>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('Reply', { post })}>
+        <View>
+          <Text style={styles.postContent}>{post.content}</Text>
+        </View>
+      </TouchableWithoutFeedback>
       <View style={styles.postStatisticsContainer}>
         <View style={styles.postStatistics}>
           <TouchableWithoutFeedback
@@ -113,7 +117,6 @@ export default function Timeline({ navigation }) {
         style={{ height: '100%' }}
         data={posts}
         renderItem={({ item }) => renderPost(item)}
-
       />
       <TouchableOpacity
         style={{ position: 'absolute', marginTop: '180%', left: '85%' }}
@@ -218,12 +221,12 @@ const styles = StyleSheet.create({
     color: '#a0a0a0',
   },
   postContent: {
-    marginTop: 8,
+    paddingTop: 8,
+    paddingBottom: 8,
     textAlign: 'justify',
     color: '#181818',
   },
   postStatisticsContainer: {
-    marginTop: 8,
   },
   postStatistics: {
     flexDirection: 'row',
