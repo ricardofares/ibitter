@@ -1,5 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
+import GlobalConfig from './config';
 import { Alert } from 'react-native';
 
 ///
@@ -16,7 +17,7 @@ import { Alert } from 'react-native';
 export const handleUserLike = async (username, postId, flag, dispatch) => {
   try {
     // Send a POST request to the server to add or remove a like based on the flag
-    const response = await axios.post(`http://192.168.100.55:5000/${flag ? 'addlike' : 'removelike'}`, {
+    const response = await axios.post(`${GlobalConfig.apiUrl}/${flag ? 'addlike' : 'removelike'}`, {
       username,
       postId,
     });

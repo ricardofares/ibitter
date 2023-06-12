@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import GlobalStyles from '../../styles';
+import GlobalConfig from '../../config';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
@@ -16,7 +17,7 @@ export default function LogIn({ navigation }) {
     try {
       // Contact the API to initiate the sign-in process.
       // Send a POST request to the specified URL, providing the email and password for authentication.
-      const logInResult = await axios.post('http://192.168.100.55:5000/signin', {
+      const logInResult = await axios.post(`${GlobalConfig.apiUrl}/signin`, {
         email,
         password,
       });

@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import GlobalStyles from '../../styles';
+import GlobalConfig from '../../config';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -25,10 +26,10 @@ export default function Timeline({ navigation }) {
     const loadAllPosts = async () => {
       try {
         // Send a GET request to the API endpoint to retrieve all the posts
-        const postResponse = await axios.get(`http://192.168.100.55:5000/posts`);
+        const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts`);
 
         // Send a GEET request to thte API endpoint to retrieve all the likes made by this user.
-        const likesResponse = await axios.get(`http://192.168.100.55:5000/getlike?username=${state.user.username}`);
+        const likesResponse = await axios.get(`${GlobalConfig.apiUrl}/getlike?username=${state.user.username}`);
 
         for (const post of postResponse.data) {
           post.i_liked = false;

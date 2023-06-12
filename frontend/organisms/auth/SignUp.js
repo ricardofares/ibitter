@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import GlobalStyles from '../../styles';
+import GlobalConfig from '../../config';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
@@ -73,7 +74,7 @@ export default function SignUp({ navigation }) {
     }
 
     try {
-      const registerResult = await axios.post(`http://192.168.100.55:5000/signup`, {
+      const registerResult = await axios.post(`${GlobalConfig.apiUrl}/signup`, {
         name,
         username,
         email,

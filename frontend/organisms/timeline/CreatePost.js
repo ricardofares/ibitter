@@ -3,6 +3,7 @@ import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
 import GlobalStyles from '../../styles';
+import GlobalConfig from '../../config';
 import axios from 'axios';
 import { StyleSheet, Text, Alert } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -29,7 +30,7 @@ export default function CreatePost({ navigation }) {
 
   const onCreatePost = async () => {
     try {
-      const postResponse = await axios.post(`http://192.168.100.55:5000/newpost`, {
+      const postResponse = await axios.post(`${GlobalConfig.apiUrl}/newpost`, {
         username: state.user.username,
         content: content
       });
