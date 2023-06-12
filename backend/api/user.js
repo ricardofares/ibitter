@@ -2,6 +2,8 @@
 ///        to crypt the user password.
 const bcrypt = require('bcrypt-nodejs');
 
+const messages = require('../config/messages.js');
+
 module.exports = app => {
   /// \brief Hashes the specified plain-text password.
   ///
@@ -49,5 +51,26 @@ module.exports = app => {
     });
   };
 
-  return { signUp };
+  /// \brief Get the name from the specified username.
+  ///
+  /// \param req The HTTP request.
+  /// \param res The HTTP response.
+  const getName = (req, res) => {
+    // Checks if the username has not been specified.
+    if (!req.query.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
+
+    const { username } = req.query;
+    app.knex('users')
+      .select('name')
+      .where('username', '=', username)
+      .then(query => {
+        return res.status(200).json(query);
+      }).catch(err => {
+        console.error(`An error has occurred while getting the name of the user ${username}`, err);
+        res.status(400).json(err);
+      });
+  };
+
+  return { signUp, getName };
 };

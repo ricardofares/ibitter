@@ -16,4 +16,6 @@ module.exports = app => {
   app.post('/addlike', app.api.likes.add);
   app.post('/removelike', app.api.likes.remove);
   app.get('/getlike', app.api.likes.get);
+
+  app.get('/getname', app.api.user.getName);
 };
