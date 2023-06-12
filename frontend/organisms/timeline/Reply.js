@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import GlobalConfig from '../../config';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
+import PostStatistics from '../../molecules/PostStatistics';
+import ContentArea from '../../molecules/ContentArea';
+import Button from '../../atoms/Button';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, Alert } from 'react-native';
+import { StyleSheet, View, Text, Image, Alert, Keyboard, TouchableWithoutFeedback, FlatList } from 'react-native';
+import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function Reply({ navigation, route }) {
-  const [name, setName] = useState('');
+  const { state, dispatch } = useContext(IbitterContext);
   const { post } = route.params;
 
-  useEffect(() => {
+  const [content, setContent] = useState('');
+  const [name, setName] = useState('');
 
+  useEffect(() => {
     axios.get(`${GlobalConfig.apiUrl}/getname?username=${route.params.post.username}`)
       .then(response => {
         // Fetch the data returned from the response.
@@ -24,16 +30,30 @@ export default function Reply({ navigation, route }) {
 
         // Update the name of the user that has posted the selected post.
         setName(data[0].name);
-      }).catch(e => {
+      }).catch(_ => {
         Alert.alert('Erro', 'Não foi possível carregar o nome do usuário que realizou a postagem.');
       });
-  }, []);
+  });
 
   return (
     <IbitterStackScreen
       navigation={navigation}
       headerTitle="Responda-o!"
       headerSubtitle="Hmm... O que você está querendo responder a ele?"
+      headerComponent={
+        <Button
+          text="Responder"
+          style={{
+            width: '30%',
+            paddingTop: 12,
+            paddingBottom: 12,
+            paddingLeft: 16,
+            paddingRight: 16,
+            marginLeft: 'auto',
+          }}
+          disabled={content.length === 0 || content.length > 255}
+        />
+      }
     >
       <View style={styles.userInfoContainer}>
         <Image
@@ -45,9 +65,24 @@ export default function Reply({ navigation, route }) {
           <Text style={{ color: '#a0a0a0' }}>@{post.username}</Text>
         </View>
       </View>
-      <View style={{ marginTop: 8 }} >
-        <Text style={{ color: '#191919', fontSize: 16 }}>{post.content}</Text>
+      <View style={{ marginTop: 8, marginBottom: 8 }} >
+        <Text style={{ color: '#191919', fontSize: 16, textAlign: 'justify' }}>{post.content}</Text>
       </View>
+      <PostStatistics state={state} dispatch={dispatch} post={post} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ marginTop: 16 }}>
+          <FlatList
+            ListHeaderComponent={
+              <ContentArea
+                label="Resposta"
+                content={content}
+                setContent={setContent}
+                maxLength={255}
+              />
+            }
+          />
+        </View>
+      </TouchableWithoutFeedback>
     </IbitterStackScreen>
   );
 }

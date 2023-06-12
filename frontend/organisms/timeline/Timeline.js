@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import GlobalStyles from '../../styles';
 import GlobalConfig from '../../config';
+import PostStatistics from '../../molecules/PostStatistics';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -70,19 +71,7 @@ export default function Timeline({ navigation }) {
           <Text style={styles.postContent}>{post.content}</Text>
         </View>
       </TouchableWithoutFeedback>
-      <View style={styles.postStatisticsContainer}>
-        <View style={styles.postStatistics}>
-          <TouchableWithoutFeedback
-            onPress={() => handleUserLike(state.user.username, post.id, !post.i_liked, dispatch)}
-          >
-            <Image
-              style={styles.postStatisticsIcon}
-              source={post.i_liked ? require('../../assets/images/heart-fill.png') : require('../../assets/images/heart.png')}
-            />
-          </TouchableWithoutFeedback>
-          <Text>{post.likes}</Text>
-        </View>
-      </View>
+      <PostStatistics state={state} dispatch={dispatch} post={post} />
     </View>;
 
 
@@ -117,6 +106,12 @@ export default function Timeline({ navigation }) {
         style={{ height: '100%' }}
         data={posts}
         renderItem={({ item }) => renderPost(item)}
+        // @Hack A hack to allow the user to scroll down until reach the bottom of the last post.
+        //       Without that the user also can reach the last post, however, to reach the bottom
+        //       of it is needed a scroll up.
+        ListFooterComponent={
+          <Text>{"\n\n\n\n\n\n\n"}</Text>
+        }
       />
       <TouchableOpacity
         style={{ position: 'absolute', marginTop: '180%', left: '85%' }}

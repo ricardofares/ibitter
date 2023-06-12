@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
+import ContentArea from '../../molecules/ContentArea';
 import GlobalStyles from '../../styles';
 import GlobalConfig from '../../config';
 import axios from 'axios';
@@ -11,22 +12,6 @@ import { IbitterContext } from '../providers/IbitterProvider';
 export default function CreatePost({ navigation }) {
   const { state, dispatch } = useContext(IbitterContext);
   const [content, setContent] = useState('');
-
-  /// \brief Updates the content whenever the content textt input changes.
-  ///
-  /// This function acts a middleware that validates the `content` input.
-  /// and updates the content accordingly.
-  ///
-  /// \param text The input text obtained from the `content` text input.
-  const onContentChange = text => {
-    // Check if the text length is greater than 255. If so,
-    // the update is ignored.
-    if (text.length > 255)
-      return;
-
-    // Updates the text state with the provided input text.
-    setContent(text);
-  };
 
   const onCreatePost = async () => {
     try {
@@ -75,22 +60,12 @@ export default function CreatePost({ navigation }) {
         />
       }
     >
-      <Input
+      <ContentArea
         label="Conteúdo"
-        settings={{
-          multiline: true,
-          onChangeText: onContentChange,
-          value: content,
-        }}
+        content={content}
+        setContent={setContent}
+        maxLength={255}
       />
-      <Text style={styles.characterCountText}>{content.length}/255</Text>
-      {/*
-      <Button
-        style={{ marginTop: 16 }}
-        text="Postar"
-        disabled={content.length === 0}
-      />
-      */}
       <Text style={styles.signUpText}>Está postagem deve estar de acordo com nossos<Text> </Text>
         <Text style={styles.signUpTextEmphasize}>Termos de Uso</Text> e nossa<Text> </Text>
         <Text style={styles.signUpTextEmphasize}>Política de Privacidade</Text>

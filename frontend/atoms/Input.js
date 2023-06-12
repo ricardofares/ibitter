@@ -6,7 +6,7 @@ export default function Input({ label, settings, style }) {
   return (
     <View style={[style, styles.textInputContainer]}>
       <Text style={[styles.textInputLabel,
-      settings.multiline && settings.multiline == true ? { top: 5 } : {}]}>{label}</Text>
+      settings && settings.multiline && settings.multiline == true ? { top: 5 } : {}]}>{label}</Text>
       <TextInput {...settings} style={styles.textInput} />
     </View>
   );
