@@ -23,7 +23,7 @@ export default function Reply({ navigation, route }) {
 
         // Check if no name has been found to that user.
         if (data.length === 0) {
-          Alert.alert('Erro', 'Parece que não foi possível encontrar um nome para o usuário que realiizou a postagem.');
+          Alert.alert('Erro', 'Parece que não foi possível encontrar um nome para o usuário que realizou a postagem.');
           navigation.pop();
           return;
         }
@@ -35,6 +35,27 @@ export default function Reply({ navigation, route }) {
       });
   });
 
+  const onReplyPost = () => {
+    axios.post(`${GlobalConfig.apiUrl}/newpost`, {
+      username: state.user.username,
+      content: content,
+      replyTo: post.id
+    }).then(_ => {
+      Alert.alert('Respondido', 'Você respondeu a esta postagem com sucesso.');
+
+      // Clear the content.
+      setContent('');
+
+      dispatch({
+        type: 'DO_TIMELINE_UPDATE',
+      });
+
+      navigation.pop();
+    }).catch(_ => {
+      Alert.alert('Erro', 'Parece que não foi possível responder a esta postagem.');
+    });
+  };
+
   return (
     <IbitterStackScreen
       navigation={navigation}
@@ -42,6 +63,7 @@ export default function Reply({ navigation, route }) {
       headerSubtitle="Hmm... O que você está querendo responder a ele?"
       headerComponent={
         <Button
+          onPress={onReplyPost}
           text="Responder"
           style={{
             width: '30%',

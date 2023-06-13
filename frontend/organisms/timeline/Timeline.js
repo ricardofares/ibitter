@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import GlobalStyles from '../../styles';
 import GlobalConfig from '../../config';
 import PostStatistics from '../../molecules/PostStatistics';
+import RepliedContent from './RepliedContent';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -56,6 +57,8 @@ export default function Timeline({ navigation }) {
     loadAllPosts();
   }, [state.lastTimelineUpdate]);
 
+  const getPost = postId => posts.filter(post => post.id === postId)[0];
+
   const renderPost = post =>
     <View style={styles.postContainer}>
       <View style={styles.postHeaderContainer}>
@@ -71,6 +74,11 @@ export default function Timeline({ navigation }) {
           <Text style={styles.postContent}>{post.content}</Text>
         </View>
       </TouchableWithoutFeedback>
+      {post.reply_to ?
+        <RepliedContent navigation={navigation} repliedPost={getPost(post.reply_to)} />
+        :
+        <></>
+      }
       <PostStatistics state={state} dispatch={dispatch} post={post} />
     </View>;
 
@@ -231,5 +239,5 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 8,
-  }
+  },
 });
