@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
     paddingLeft: GlobalStyles.paddingLeft,
     paddingRight: GlobalStyles.paddingRight,
     paddingBottom: 16,
-    borderBottomWidth: 5,
-    borderColor: '#f0f0f0',
+    borderBottomWidth: 1,
+    borderColor: '#dfdfdf',
   },
   postHeaderContainer: {
     flexDirection: 'row',

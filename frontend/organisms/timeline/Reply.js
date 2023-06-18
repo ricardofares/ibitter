@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import GlobalConfig from '../../config';
+import ReplyMessageList from './ReplyMessageList';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import PostStatistics from '../../molecules/PostStatistics';
 import ContentArea from '../../molecules/ContentArea';
 import Button from '../../atoms/Button';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, Alert, Keyboard, TouchableWithoutFeedback, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function Reply({ navigation, route }) {
   const { state, dispatch } = useContext(IbitterContext);
-  const { post } = route.params;
 
+  const [post, setPost] = useState(route.params.post);
   const [content, setContent] = useState('');
   const [name, setName] = useState('');
 
@@ -33,7 +34,7 @@ export default function Reply({ navigation, route }) {
       }).catch(_ => {
         Alert.alert('Erro', 'Não foi possível carregar o nome do usuário que realizou a postagem.');
       });
-  });
+  }, [state.lastTimelineUpdate]);
 
   const onReplyPost = () => {
     axios.post(`${GlobalConfig.apiUrl}/newpost`, {
@@ -50,7 +51,9 @@ export default function Reply({ navigation, route }) {
         type: 'DO_TIMELINE_UPDATE',
       });
 
-      navigation.pop();
+      // Update the messages count from the post without the need to fetch it
+      // again from the database to reduce the network bandwidth consumption.
+      post.messages_count++;
     }).catch(_ => {
       Alert.alert('Erro', 'Parece que não foi possível responder a esta postagem.');
     });
@@ -59,8 +62,6 @@ export default function Reply({ navigation, route }) {
   return (
     <IbitterStackScreen
       navigation={navigation}
-      headerTitle="Responda-o!"
-      headerSubtitle="Hmm... O que você está querendo responder a ele?"
       headerComponent={
         <Button
           onPress={onReplyPost}
@@ -91,20 +92,23 @@ export default function Reply({ navigation, route }) {
         <Text style={{ color: '#191919', fontSize: 16, textAlign: 'justify' }}>{post.content}</Text>
       </View>
       <PostStatistics post={post} />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ marginTop: 16 }}>
-          <FlatList
-            ListHeaderComponent={
+      <ReplyMessageList
+        ListHeaderComponent={
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{ marginTop: 16, }}>
               <ContentArea
                 label="Resposta"
                 content={content}
                 setContent={setContent}
                 maxLength={255}
               />
-            }
-          />
-        </View>
-      </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        }
+        navigation={navigation}
+        username={state.user.username}
+        postId={post.id}
+      />
     </IbitterStackScreen>
   );
 }

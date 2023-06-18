@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 4,
     marginBottom: 4,
-    borderWidth: 0.25,
-    borderColor: '#b0b0b0',
+    borderWidth: 1,
+    borderColor: '#dfdfdf',
     borderRadius: 10,
   },
   repliedContent: {

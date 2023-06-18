@@ -74,5 +74,32 @@ module.exports = app => {
       });
   };
 
-  return { save, load };
+  const fetchPostMessages = (req, res) => {
+    // Check if the username has not been specified. If the user
+    // has not been specified, then a 400 Bad Request response is
+    // sent.
+    if (!req.query.postId)
+      return res.status(400).json(messages['POST_IDENTIFIER_NOT_SPECIFIED']);
+
+    // Check if the username has not beenn specified. If the user
+    // has not been specified, then a 400 Bad Request response is
+    // sent.
+    if (!req.query.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
+
+    const { postId, username } = req.query;
+
+    app.knex.raw(`
+        SELECT *,
+        (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
+        (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked
+        FROM posts AS p
+        WHERE p.reply_to = ${postId}
+        ORDER BY posted_at DESC
+      `)
+      .then(query => { return res.status(200).json(query.rows); })
+      .catch(err => { return res.status(400).json(err); });
+  };
+
+  return { save, load, fetchPostMessages };
 };

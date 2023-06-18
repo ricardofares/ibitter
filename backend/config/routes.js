@@ -11,6 +11,7 @@ module.exports = app => {
 
   /// \brief Create a route for user to fetch posts.
   app.get('/posts', app.api.post.load);
+  app.get('/postmessages', app.api.post.fetchPostMessages);
 
   /// \brief Create a route for user to like posts.
   app.post('/addlike', app.api.likes.add);
