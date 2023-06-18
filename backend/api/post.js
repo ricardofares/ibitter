@@ -3,20 +3,18 @@ const messages = require('../config/messages.js');
 module.exports = app => {
 
   const load = async (req, res) => {
-    let posts = [];
-
     // Check if the username has not beenn specified. If the user
     // has not been specified, then a 400 Bad Request response is
     // sent.
     if (!req.query.username)
       return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
-    const { username } = req.query.username;
+    const { username } = req.query;
 
     app.knex.raw(`
         SELECT *,
         (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
-        (SELECT COUNT(*) > 0 FROM likes WHERE username = ${username} AND post_id = p.id) AS i_liked
+        (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked
         FROM posts AS p
         ORDER BY posted_at DESC
       `)
