@@ -15,6 +15,9 @@ const defaultState = {
 	/// once it is retrieved from the database during the login process.
 	user: undefined,
 
+	/// \brief Contains all loaded posts from the database.
+	posts: undefined,
+
 	/// \brief Represents the datetime of the last timeline update.
 	///
 	/// This property holds the timestamp indicating the datetime of the most recent timeline update.
@@ -38,6 +41,13 @@ const actions = {
 		return {
 			...state,
 			lastTimelineUpdate: new Date(),
+		}
+	},
+	'UPDATE_POSTS': (state, payload) => {
+		console.log(`Posts have been updated, now we have ${payload.posts.length} posts`);
+		return {
+			...state,
+			posts: payload.posts
 		}
 	},
 };

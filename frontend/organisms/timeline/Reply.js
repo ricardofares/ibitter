@@ -90,7 +90,7 @@ export default function Reply({ navigation, route }) {
       <View style={{ marginTop: 8, marginBottom: 8 }} >
         <Text style={{ color: '#191919', fontSize: 16, textAlign: 'justify' }}>{post.content}</Text>
       </View>
-      <PostStatistics state={state} dispatch={dispatch} post={post} />
+      <PostStatistics post={post} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ marginTop: 16 }}>
           <FlatList

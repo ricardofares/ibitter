@@ -28,7 +28,7 @@ export default function Timeline({ navigation }) {
     const loadAllPosts = async () => {
       try {
         // Send a GET request to the API endpoint to retrieve all the posts
-        const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts`);
+        const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}`);
 
         // Send a GEET request to thte API endpoint to retrieve all the likes made by this user.
         const likesResponse = await axios.get(`${GlobalConfig.apiUrl}/getlike?username=${state.user.username}`);
@@ -43,6 +43,13 @@ export default function Timeline({ navigation }) {
 
         // Update the state of the component with the received post data.
         setPosts(postResponse.data);
+
+        dispatch({
+          type: 'UPDATE_POSTS',
+          payload: {
+            posts: postResponse.data,
+          },
+        });
       } catch (e) {
         // Display an alert to the user informing them about the server being offline.
         if (e.message === 'Network Error') {

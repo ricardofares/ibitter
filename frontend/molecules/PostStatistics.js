@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { IbitterContext } from '../organisms/providers/IbitterProvider';
 import { handleUserLike } from '../utils';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback } from 'react-native';
 
-export default function PostStatistics({ state, dispatch, post }) {
+export default function PostStatistics({ post }) {
+  const { state, dispatch } = useContext(IbitterContext);
+
   const adapterHandleUserLike = () => {
     handleUserLike(state.user.username, post.id, !post.i_liked, dispatch);
 
@@ -14,7 +17,6 @@ export default function PostStatistics({ state, dispatch, post }) {
     else
       post.likes++;
     post.i_liked = !post.i_liked;
-
   };
 
   return (
@@ -28,7 +30,16 @@ export default function PostStatistics({ state, dispatch, post }) {
             source={post.i_liked ? require('../assets/images/heart-fill.png') : require('../assets/images/heart.png')}
           />
         </TouchableWithoutFeedback>
-        <Text>{post.likes}</Text>
+        <Text style={{ marginRight: 16 }}>{post.likes}</Text>
+        <TouchableWithoutFeedback
+          onPress={adapterHandleUserLike}
+        >
+          <Image
+            style={styles.statisticsIcon}
+            source={require('../assets/images/message.png')}
+          />
+        </TouchableWithoutFeedback>
+        <Text style={{ marginRight: 16 }}>{post.messages_count}</Text>
       </View>
     </View>
   );

@@ -1,24 +1,27 @@
+const messages = require('../config/messages.js');
+
 module.exports = app => {
 
   const load = async (req, res) => {
     let posts = [];
 
-    // Check if the username has been specified. If so, only return
-    // the posts that have been made by the specified user.
-    if (req.query.username) {
-      const { username } = req.query;
-      posts = await app.knex('posts')
-        .where('username', '=', username)
-        .orderBy('posted_at', 'desc');
-    }
-    // On the other hand, if the username has not been specified. Then,
-    // return all posts made.
-    else {
-      posts = await app.knex('posts')
-        .orderBy('posted_at', 'desc');
-    }
+    // Check if the username has not beenn specified. If the user
+    // has not been specified, then a 400 Bad Request response is
+    // sent.
+    if (!req.query.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
-    return res.status(200).json(posts);
+    const { username } = req.query.username;
+
+    app.knex.raw(`
+        SELECT *,
+        (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
+        (SELECT COUNT(*) > 0 FROM likes WHERE username = ${username} AND post_id = p.id) AS i_liked
+        FROM posts AS p
+        ORDER BY posted_at DESC
+      `)
+      .then(query => { return res.status(200).json(query.rows); })
+      .catch(err => { return res.status(400).json(err); });
   };
 
   /// \brief Saves a post in the database.
@@ -58,9 +61,14 @@ module.exports = app => {
       insert({
         username,
         content,
+        reply_to: req.body.replyTo || null,
         posted_at: new Date()
       }).then(_ => {
-        console.log(`User ${username} has made a post`);
+        if (req.body.replyTo)
+          console.log(`User ${username} has made a post replying the post ${req.body.replyTo}`);
+        else
+          console.log(`User ${username} has made a post`);
+
         res.status(204).send();
       }).catch(err => {
         console.warn(`User ${username} tried to make a post, but failed.`);
