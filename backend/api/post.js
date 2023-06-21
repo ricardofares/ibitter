@@ -9,13 +9,14 @@ module.exports = app => {
     if (!req.query.username)
       return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
-    const { username } = req.query;
+    const { username, afterAt } = req.query;
 
     app.knex.raw(`
         SELECT *,
         (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
         (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked
         FROM posts AS p
+        ${afterAt === undefined ? '' : `WHERE p.posted_at < '${afterAt}'`}
         ORDER BY posted_at DESC
         LIMIT 10
       `)

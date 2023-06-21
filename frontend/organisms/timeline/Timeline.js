@@ -64,7 +64,34 @@ export default function Timeline({ navigation }) {
     loadAllPosts();
   }, [state.lastTimelineUpdate]);
 
-  const getPost = postId => posts.filter(post => post.id === postId)[0];
+  const loadMorePosts = async () => {
+    try {
+      const response = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}&afterAt=${posts[posts.length - 1].posted_at}`);
+      const loadedPosts = response.data;
+
+      // Check if there are no posts to be loaded from the database.
+      if (loadedPosts.length === 0) {
+        console.log('There is no more posts to be loaded');
+        return;
+      }
+
+      setPosts([...posts, ...loadedPosts]);
+
+      display({
+        type: 'UPDATE_POSTS',
+        payload: {
+          posts: [...posts, ...loadedPosts],
+        },
+      });
+
+    } catch (e) {
+      // Display an alert to the user informing them about the server being offline.
+      if (e.message === 'Network Error') {
+        Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+        return;
+      }
+    }
+  };
 
   const renderPost = post =>
     <View style={styles.postContainer}>
@@ -125,8 +152,12 @@ export default function Timeline({ navigation }) {
         //       Without that the user also can reach the last post, however, to reach the bottom
         //       of it is needed a scroll up.
         ListFooterComponent={
-          <Text>{"\n\n\n\n\n\n\n"}</Text>
+          <>
+            <Text>{"\n\n"}</Text>
+            <ActivityIndicator style={{ padding: 16 }} />
+          </>
         }
+        onEndReached={loadMorePosts}
       />
       <TouchableOpacity
         style={{ position: 'absolute', marginTop: '180%', left: '85%' }}
