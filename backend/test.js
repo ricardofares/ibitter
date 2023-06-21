@@ -1,5 +1,10 @@
 const knex = require('./config/db.js');
 
+knex('posts')
+  .then(response => console.log(response))
+  .catch(console.log);
+
+/*
 knex.raw(`
   SELECT *,
   (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS message_count,
@@ -8,3 +13,4 @@ knex.raw(`
 `)
   .then(response => console.log(response.rows))
   .catch(e => console.log(e));
+*/

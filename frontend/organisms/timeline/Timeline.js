@@ -4,9 +4,9 @@ import GlobalConfig from '../../config';
 import PostStatistics from '../../molecules/PostStatistics';
 import RepliedContent from './RepliedContent';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
-import { handleUserLike, timeDiff } from '../../utils';
+import { timeDiff } from '../../utils';
 
 export default function Timeline({ navigation }) {
   const { state, dispatch } = useContext(IbitterContext);
@@ -82,7 +82,7 @@ export default function Timeline({ navigation }) {
         </View>
       </TouchableWithoutFeedback>
       {post.reply_to ?
-        <RepliedContent navigation={navigation} repliedPost={getPost(post.reply_to)} />
+        <RepliedContent navigation={navigation} repliedPostId={post.reply_to} />
         :
         <></>
       }
