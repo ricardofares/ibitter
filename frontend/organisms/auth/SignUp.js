@@ -4,8 +4,9 @@ import GlobalConfig from '../../config';
 import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
+import SelectDropdown from 'react-native-select-dropdown';
 import axios from 'axios';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert, ScrollView } from 'react-native';
 import { hasUppercaseLetter, hasLowercaseLetter, hasSymbol } from '../../utils';
 
 export default function SignUp({ navigation }) {
@@ -13,6 +14,7 @@ export default function SignUp({ navigation }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [course, setCourse] = useState('');
 
   /// \brief Updates the name whenever thee name teext input changes.
   ///
@@ -36,6 +38,19 @@ export default function SignUp({ navigation }) {
     // Updates the username state with the provided input text. In this case,
     // there is no username validation.
     setUsername(text);
+  };
+
+  /// \brief Updates the course whenever the course selection changes.
+  ///
+  /// This function acts as a middleware that validates the `course` input
+  /// and updates the course accordingly.
+  ///
+  /// \param course The course text obtained from the course selection dropdown.
+  /// \param index The course index in the course selection dropdown.
+  const onCourseChange = (course, index) => {
+    // Updates the course state with the provided course selection. In this case,
+    // there is no course valiidation.
+    setCourse(course);
   };
 
   /// \brief Updates the email whenever the email text input changes.
@@ -65,7 +80,7 @@ export default function SignUp({ navigation }) {
 
   const onRegisterUser = async () => {
     // Validate each of the inputs needed for create an account.
-    for (const validate of registerValidationCases(username, email, password)) {
+    for (const validate of registerValidationCases(username, email, password, course)) {
       const checkResult = validate();
       if (checkResult.condition) {
         Alert.alert(checkResult.title, checkResult.message);
@@ -77,6 +92,7 @@ export default function SignUp({ navigation }) {
       const registerResult = await axios.post(`${GlobalConfig.apiUrl}/signup`, {
         name,
         username,
+        course,
         email,
         password
       });
@@ -125,14 +141,35 @@ export default function SignUp({ navigation }) {
       headerTitle="Registre-se"
       headerSubtitle="Crie uma conta para que você possa desfrutar de nossas histórias."
     >
-      <View>
+      <ScrollView
+        automaticallyAdjustKeyboardInsets={true}
+      >
         <Input label="Nome" settings={{ onChangeText: onNameChange, value: name }} />
         <Input style={{ marginTop: 12 }} label="Usuário" settings={{ onChangeText: onUsernameChange, value: username }} />
         <Text style={styles.adviseText}>O usuário deve conter mais que 6 caracteres.</Text>
+        <SelectDropdown
+          data={[
+            "Ciências Biológicas",
+            "Ciência da Computação",
+            "Engenharia de Alimentos",
+            "Física",
+            "Matemática",
+            "Química",
+            "Tradução",
+            "Letras",
+            "Pedagogia",
+          ]}
+          buttonStyle={styles.buttonSelectDropdown}
+          buttonTextStyle={styles.buttonTextSelectDropdown}
+          rowTextStyle={styles.selectDropdownText}
+          dropdownStyle={styles.selectDropdown}
+          defaultButtonText="Curso de Graduação"
+          onSelect={onCourseChange}
+        />
         <Input style={{ marginTop: 12 }} settings={{ inputMode: 'email', onChangeText: onEmailChange, value: email }} label="E-mail" />
         <Input style={{ marginTop: 12 }} settings={{ secureTextEntry: true, onChangeText: onPasswordChange, value: password }} label="Senha" />
         <Text style={styles.adviseText}>Sua senha deve conter 8 ou mais caracteres & deve conter uma mistura de caracteres maiúsculos e minúsculos, números e símbolos.</Text>
-      </View>
+      </ScrollView>
       <View style={{ marginTop: 32 }}>
         <Button text="Criar uma conta" onPress={onRegisterUser} />
         <Text style={styles.signUpText}>Criando sua conta, você está aceitando nossos<Text> </Text>
@@ -144,7 +181,7 @@ export default function SignUp({ navigation }) {
   );
 }
 
-const registerValidationCases = (username, email, password) => [
+const registerValidationCases = (username, email, password, course) => [
   () => {
     return {
       condition: username.length === 0,
@@ -157,6 +194,13 @@ const registerValidationCases = (username, email, password) => [
       condition: username.length < 6,
       title: 'Usuário Inválido',
       message: 'O nome do usuário deve conter mais que 6 caracteres',
+    };
+  },
+  () => {
+    return {
+      condition: course.length === 0,
+      title: 'Curso Inválido',
+      message: 'O curso não foi selecionado',
     };
   },
   () => {
@@ -245,4 +289,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
+  buttonSelectDropdown: {
+    backgroundColor: GlobalStyles.tertiaryColor,
+    flexDirection: 'row',
+    marginTop: 8,
+    padding: 8,
+    borderRadius: 10,
+    width: '100%',
+  },
+  buttonTextSelectDropdown: {
+    color: '#5b606b',
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  selectDropdown: {
+    backgroundColor: GlobalStyles.tertiaryColor,
+    borderRadius: 10,
+  },
+  selectDropdownText: {
+    color: '#5b606b',
+  }
 });

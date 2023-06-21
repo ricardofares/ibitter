@@ -32,7 +32,7 @@ export default function App() {
       <NavigationContainer>
         <SafeAreaView style={styles.container}>
           <AppScreen />
-          <StatusBar style="auto" />
+          <StatusBar style="black" />
         </SafeAreaView>
       </NavigationContainer>
     </IbitterProvider>
