@@ -43,6 +43,27 @@ const actions = {
 			lastTimelineUpdate: new Date(),
 		}
 	},
+	/// Dispatch an action to update the posts in the application state.
+	///
+	/// This function dispatches an action to update the application state with the newly loaded posts.
+	/// The action has a type of 'UPDATE_POSTS' and a payload containing the updated posts array.
+	/// By calling the `display` function with the dispatched action, the application state is updated
+	/// to include the additional posts.
+	///
+	/// \details The action type 'UPDATE_POSTS' is typically handled by a reducer function that updates
+	/// the state with the new posts. The payload contains the updated posts array, which is a combination
+	/// of the existing posts and the newly loaded posts. By using the spread operator, the function ensures
+	/// that the existing posts remain unchanged while appending the new posts.
+	///
+	/// Example usage:
+	/// ```
+	/// display({
+	///   type: 'UPDATE_POSTS',
+	///   payload: {
+	///     posts: [...posts, ...loadedPosts],
+	///   },
+	/// });
+	/// ```
 	'UPDATE_POSTS': (state, payload) => {
 		console.log(`Posts have been updated, now we have ${payload.posts.length} posts`);
 		return {

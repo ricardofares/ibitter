@@ -64,12 +64,31 @@ export default function Timeline({ navigation }) {
     loadAllPosts();
   }, [state.lastTimelineUpdate]);
 
+  /// \brief Loads more posts from the server.
+  ///
+  /// This asynchronous function retrieves additional posts from the server's API endpoint
+  /// and updates the application state with the fetched data. If there are no more posts to be loaded,
+  /// the function logs a message and returns.
+  ///
+  /// \details The function constructs the URL for the API request by appending the username and the timestamp
+  /// of the last loaded post to the base API URL. It sends a GET request to the constructed URL using axios,
+  /// awaits the response, and extracts the loaded posts from the response data.
+  ///
+  /// If there are loaded posts, they are added to the existing posts array by using the spread operator.
+  /// The function then updates the state by calling the `setPosts` function with the updated posts array.
+  ///
+  /// If an error occurs during the API request, the function catches the error and checks if it is a network error
+  /// indicating the server being offline. In such cases, it displays an alert to the user, informing them about
+  /// the server unavailability.
   const loadMorePosts = async () => {
     try {
+      /// Construct the URL to fetch more posts using the apiUrl and query parameters.
       const response = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}&afterAt=${posts[posts.length - 1].posted_at}`);
+
+      /// Send a GET request to the server to fetch the additional posts.
       const loadedPosts = response.data;
 
-      // Check if there are no posts to be loaded from the database.
+      /// Check if there are no posts to be loaded from the database.
       if (loadedPosts.length === 0) {
         console.log('There is no more posts to be loaded');
         return;
@@ -77,6 +96,7 @@ export default function Timeline({ navigation }) {
 
       setPosts([...posts, ...loadedPosts]);
 
+      /// Dispatch an action to update the posts in the application state.
       display({
         type: 'UPDATE_POSTS',
         payload: {
@@ -85,8 +105,10 @@ export default function Timeline({ navigation }) {
       });
 
     } catch (e) {
-      // Display an alert to the user informing them about the server being offline.
+      /// Handle errors that occur during the API request.
+      /// Check if the error is due to the server being offline.
       if (e.message === 'Network Error') {
+        /// Display an alert to the user informing them about the server being offline.
         Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
         return;
       }
