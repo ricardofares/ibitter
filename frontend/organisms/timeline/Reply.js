@@ -7,7 +7,7 @@ import ContentArea from '../../molecules/ContentArea';
 import Button from '../../atoms/Button';
 import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function Reply({ navigation, route }) {

@@ -101,3 +101,11 @@ export const hasUppercaseLetter = string => {
 export const hasSymbol = string => {
   return /[|\\/~^:,;?!&%$@*+]/.test(string);
 };
+
+export const countNewLines = string => {
+  let newLineCount = 0;
+  for (const character of string)
+    if (character == '\n')
+      newLineCount++;
+  return newLineCount;
+};

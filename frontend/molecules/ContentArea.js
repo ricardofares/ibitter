@@ -2,6 +2,7 @@ import React from 'react';
 import GlobalStyles from '../config';
 import Input from '../atoms/Input';
 import { StyleSheet, ScrollView, Text } from 'react-native';
+import { countNewLines } from '../utils';
 
 export default function ContentArea({ label, content, setContent, maxLength }) {
   /// \brief Updates the content whenever the content textt input changes.
@@ -16,6 +17,9 @@ export default function ContentArea({ label, content, setContent, maxLength }) {
     if (text.length > maxLength)
       return;
 
+    if (countNewLines(text) > 5)
+      return;
+
     // Updates the text state with the provided input text.
     setContent(text);
   };
@@ -28,6 +32,7 @@ export default function ContentArea({ label, content, setContent, maxLength }) {
         label={label}
         settings={{
           multiline: true,
+          maxHeight: 200,
           onChangeText: onContentChange,
           value: content,
         }}

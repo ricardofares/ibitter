@@ -44,20 +44,22 @@ export default function RepliedContent({ navigation, repliedPostId }) {
     return <ActivityIndicator />;
   } else {
     return (
-      <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('Reply', { post: repliedPost })}
-      >
-        <View style={{ marginLeft: 40, marginBottom: 8 }}>
-          <View style={styles.repliedContentContainer}>
-            <View style={styles.postHeaderContainer}>
-              <CourseImage style={styles.userIcon} username={repliedPost.username} />
-              <Text style={styles.postHeaderUsername}>{repliedPost.username}</Text>
-              <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
+      <>
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate('Reply', { post: repliedPost })}
+        >
+          <View style={{ marginLeft: 40, marginBottom: 8 }}>
+            <View style={styles.repliedContentContainer}>
+              <View style={styles.postHeaderContainer}>
+                <CourseImage style={styles.userIcon} username={repliedPost.username} />
+                <Text style={styles.postHeaderUsername}>{repliedPost.username}</Text>
+                <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
+              </View>
+              <Text style={styles.repliedContent}>{repliedPost.content}</Text>
             </View>
-            <Text style={styles.repliedContent}>{repliedPost.content}</Text>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </>
     );
   }
 }

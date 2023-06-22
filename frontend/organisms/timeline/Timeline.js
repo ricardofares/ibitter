@@ -118,6 +118,22 @@ export default function Timeline({ navigation }) {
 
   const renderPost = post =>
     <View style={styles.postContainer}>
+      {
+        post.retweet_of !== null ?
+          <View style={{
+            marginLeft: 40,
+            marginBottom: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+            <Image
+              style={{ width: 18, height: 18 }}
+              source={require('../../assets/images/retweet.png')}
+            />
+            <Text style={{ marginLeft: 4, color: '#5e6573', fontSize: 12, fontWeight: 'bold' }}>{post.name} Rebeetou</Text>
+          </View>
+          : <></>
+      }
       <View style={styles.postHeaderContainer}>
         <CourseImage username={post.username} />
         <View style={{ marginLeft: 8, flexDirection: 'column' }}>
@@ -138,7 +154,7 @@ export default function Timeline({ navigation }) {
         :
         <></>
       }
-      <PostStatistics state={state} dispatch={dispatch} post={post} />
+      <PostStatistics navigation={navigation} state={state} dispatch={dispatch} post={post} />
     </View>;
 
 

@@ -14,7 +14,9 @@ module.exports = app => {
     app.knex.raw(`
         SELECT *,
         (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
+        (SELECT COUNT(*) FROM posts WHERE retweet_of = p.id) AS retweets_count,
         (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked,
+        (SELECT COUNT(*) > 0 FROM posts WHERE username = '${username}' AND retweet_of = p.id) AS i_retweet,
         (SELECT u.name FROM users AS u WHERE u.username = '${username}') AS name
         FROM posts AS p
         ${afterAt === undefined ? '' : `WHERE p.posted_at < '${afterAt}'`}
@@ -63,6 +65,7 @@ module.exports = app => {
         username,
         content,
         reply_to: req.body.replyTo || null,
+        retweet_of: req.body.retweetOf || null,
         posted_at: new Date()
       }).then(_ => {
         if (req.body.replyTo)
@@ -95,7 +98,9 @@ module.exports = app => {
     app.knex.raw(`
         SELECT *,
         (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
+        (SELECT COUNT(*) FROM posts WHERE retweet_of = p.id) AS retweets_count,
         (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked,
+        (SELECT COUNT(*) > 0 FROM posts WHERE username = '${username}' AND retweet_of = p.id) AS i_retweet,
         (SELECT u.name FROM users AS u WHERE u.username = '${username}') AS name
         FROM posts AS p
         WHERE p.reply_to = ${postId}
