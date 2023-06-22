@@ -5,6 +5,7 @@ import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
 import PostStatistics from '../../molecules/PostStatistics';
 import ContentArea from '../../molecules/ContentArea';
 import Button from '../../atoms/Button';
+import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -79,10 +80,7 @@ export default function Reply({ navigation, route }) {
       }
     >
       <View style={styles.userInfoContainer}>
-        <Image
-          style={styles.userIcon}
-          source={require('../../assets/images/Photo.png')}
-        />
+        <CourseImage username={post.username} />
         <View style={{ marginLeft: 8, flexDirection: 'column', justifyContent: 'center' }} >
           <Text style={{ fontWeight: 'bold' }}>{name}</Text>
           <Text style={{ color: '#a0a0a0' }}>@{post.username}</Text>

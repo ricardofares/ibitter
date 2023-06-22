@@ -2,6 +2,8 @@
 module.exports = app => {
   /// \brief Creates a route for user to sign-up.
   app.post('/signup', app.api.user.signUp);
+  app.get('/getname', app.api.user.getName);
+  app.get('/getcourse', app.api.user.fetchCourse);
 
   /// \brief Creates a route for user to sign-in.
   app.post('/signin', app.api.auth.signIn);
@@ -18,6 +20,4 @@ module.exports = app => {
   app.post('/addlike', app.api.likes.add);
   app.post('/removelike', app.api.likes.remove);
   app.get('/getlike', app.api.likes.get);
-
-  app.get('/getname', app.api.user.getName);
 };

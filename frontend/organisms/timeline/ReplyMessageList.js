@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import GlobalStyles from '../../styles';
 import GlobalConfig from '../../config';
 import PostStatistics from '../../molecules/PostStatistics';
+import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
 import {
   StyleSheet, View, Text, FlatList, Image, TouchableWithoutFeedback
@@ -34,9 +35,9 @@ export default function ReplyMessageList({ ListHeaderComponent, navigation, user
   const renderMessage = post =>
     <View style={styles.postContainer}>
       <View style={styles.postHeaderContainer}>
-        <Image
+        <CourseImage
           style={styles.userIcon}
-          source={require('../../assets/images/Photo.png')}
+          username={post.username}
         />
         <Text style={styles.postHeaderUsername}>{post.username}</Text>
         <Text style={styles.postHeaderTime}>&#8226; {timeDiff(post.posted_at, new Date())}</Text>

@@ -57,11 +57,16 @@ module.exports = app => {
   /// \param req The HTTP request.
   /// \param res The HTTP response.
   const getName = (req, res) => {
-    // Checks if the username has not been specified.
+    /// Checks if the username has not been specified in the request query parameters.
+    ///
+    /// This conditional statement is used to validate the presence of a username in the request query parameters.
+    /// If the username is not specified, it indicates an invalid request, and a response with status code 400 is sent
+    /// along with an error message indicating that the user has not been specified.
     if (!req.query.username)
       return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
     const { username } = req.query;
+
     app.knex('users')
       .select('name')
       .where('username', '=', username)
@@ -69,9 +74,34 @@ module.exports = app => {
         return res.status(200).json(query);
       }).catch(err => {
         console.error(`An error has occurred while getting the name of the user ${username}`, err);
-        res.status(400).json(err);
+        return res.status(400).json(err);
       });
   };
 
-  return { signUp, getName };
+  /// \brief Retrieves the course information for a user.
+  ///
+  /// \param req The HTTP request.
+  /// \param res The HTTP response.
+  const fetchCourse = (req, res) => {
+    /// Checks if the username has not been specified in the request query parameters.
+    ///
+    /// This conditional statement is used to validate the presence of a username in the request query parameters.
+    /// If the username is not specified, it indicates an invalid request, and a response with status code 400 is sent
+    /// along with an error message indicating that the user has not been specified.
+    if (!req.query.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
+
+    const { username } = req.query;
+
+    app.knex('users')
+      .select('course')
+      .where('username', '=', username)
+      .then(query => {
+        return res.status(200).json(query);
+      }).catch(e => {
+        return res.status(400).json(e);
+      });
+  };
+
+  return { signUp, getName, fetchCourse };
 };

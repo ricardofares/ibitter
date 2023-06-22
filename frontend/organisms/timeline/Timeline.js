@@ -3,6 +3,7 @@ import GlobalStyles from '../../styles';
 import GlobalConfig from '../../config';
 import PostStatistics from '../../molecules/PostStatistics';
 import RepliedContent from './RepliedContent';
+import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -118,10 +119,7 @@ export default function Timeline({ navigation }) {
   const renderPost = post =>
     <View style={styles.postContainer}>
       <View style={styles.postHeaderContainer}>
-        <Image
-          style={styles.userIcon}
-          source={require('../../assets/images/Photo.png')}
-        />
+        <CourseImage username={post.username} />
         <Text style={styles.postHeaderUsername}>{post.username}</Text>
         <Text style={styles.postHeaderTime}>&#8226; {timeDiff(post.posted_at, new Date())}</Text>
       </View>
@@ -142,9 +140,9 @@ export default function Timeline({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.headerContainer}>
-        <Image
+        <CourseImage
           style={styles.userIcon}
-          source={require('../../assets/images/Photo.png')}
+          username={state.user.username}
         />
         <Text style={styles.headerTitle}>@{state.user.username || 'Username Placeholder'}</Text>
         <Image

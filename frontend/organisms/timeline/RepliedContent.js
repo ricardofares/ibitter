@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import GlobalConfig from '../../config';
+import CourseImage from '../../atoms/CourseImage';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
@@ -49,10 +50,7 @@ export default function RepliedContent({ navigation, repliedPostId }) {
         <View style={{ marginBottom: 8 }}>
           <View style={styles.repliedContentContainer}>
             <View style={styles.postHeaderContainer}>
-              <Image
-                style={styles.userIcon}
-                source={require('../../assets/images/Photo.png')}
-              />
+              <CourseImage style={styles.userIcon} username={repliedPost.username} />
               <Text style={styles.postHeaderUsername}>{repliedPost.username}</Text>
               <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
             </View>
