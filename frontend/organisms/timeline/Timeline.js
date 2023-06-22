@@ -203,7 +203,7 @@ export default function Timeline({ navigation }) {
         onEndReached={loadMorePosts}
       />
       <TouchableOpacity
-        style={{ position: 'absolute', marginTop: '180%', left: '85%' }}
+        style={{ position: 'absolute', marginTop: '170%', left: '80%' }}
         activeOpacity={0.75}
         onPress={() => navigation.navigate('CreatePost')}
       >
@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
 
   },
   headerContainer: {
+    paddingTop: GlobalStyles.paddingTop,
     paddingLeft: GlobalStyles.paddingLeft,
     paddingRight: GlobalStyles.paddingRight,
     flexDirection: 'row',
@@ -274,6 +275,10 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     borderRadius: 50,
+    height: 60,
+    width: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'black',
     shadowColor: '#171717',
     shadowOffset: { width: -2, height: 4 },

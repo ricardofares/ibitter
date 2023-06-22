@@ -7,7 +7,7 @@
 const serverMethod = 'http';
 
 // Server address where the API is hosted
-const serverAddress = '192.168.100.55';
+const serverAddress = '192.168.0.194';
 
 // Server port on which the API is running
 const serverPort = 5000;
