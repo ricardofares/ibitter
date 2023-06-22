@@ -103,8 +103,8 @@ export default function CourseImage({ username, style }) {
 
 const styles = StyleSheet.create({
   userIcon: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     borderRadius: 10,
   },
 });

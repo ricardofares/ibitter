@@ -40,7 +40,7 @@ export default function Reply({ navigation, route }) {
   const onReplyPost = () => {
     axios.post(`${GlobalConfig.apiUrl}/newpost`, {
       username: state.user.username,
-      content: content,
+      content: content.trim(),
       replyTo: post.id
     }).then(_ => {
       Alert.alert('Respondido', 'Você respondeu a esta postagem com sucesso.');
@@ -87,7 +87,7 @@ export default function Reply({ navigation, route }) {
         </View>
       </View>
       <View style={{ marginTop: 8, marginBottom: 8 }} >
-        <Text style={{ color: '#191919', fontSize: 16, textAlign: 'justify' }}>{post.content}</Text>
+        <Text style={{ marginLeft: 44, color: '#191919', fontSize: 16, textAlign: 'justify' }}>{post.content}</Text>
       </View>
       <PostStatistics post={post} />
       <ReplyMessageList

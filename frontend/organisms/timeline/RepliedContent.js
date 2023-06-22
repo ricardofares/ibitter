@@ -47,7 +47,7 @@ export default function RepliedContent({ navigation, repliedPostId }) {
       <TouchableWithoutFeedback
         onPress={() => navigation.navigate('Reply', { post: repliedPost })}
       >
-        <View style={{ marginBottom: 8 }}>
+        <View style={{ marginLeft: 40, marginBottom: 8 }}>
           <View style={styles.repliedContentContainer}>
             <View style={styles.postHeaderContainer}>
               <CourseImage style={styles.userIcon} username={repliedPost.username} />

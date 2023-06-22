@@ -20,7 +20,7 @@ export default function PostStatistics({ post }) {
   };
 
   return (
-    <View>
+    <View style={{ marginLeft: 40 }}>
       <View style={styles.statistics}>
         <TouchableWithoutFeedback
           onPress={adapterHandleUserLike}
@@ -30,7 +30,7 @@ export default function PostStatistics({ post }) {
             source={post.i_liked ? require('../assets/images/heart-fill.png') : require('../assets/images/heart.png')}
           />
         </TouchableWithoutFeedback>
-        <Text style={{ marginRight: 16 }}>{post.likes}</Text>
+        <Text style={styles.statisticsNumberText}>{post.likes}</Text>
         <TouchableWithoutFeedback
           onPress={adapterHandleUserLike}
         >
@@ -39,7 +39,7 @@ export default function PostStatistics({ post }) {
             source={require('../assets/images/message.png')}
           />
         </TouchableWithoutFeedback>
-        <Text style={{ marginRight: 16 }}>{post.messages_count}</Text>
+        <Text style={styles.statisticsNumberText}>{post.messages_count}</Text>
       </View>
     </View>
   );
@@ -51,8 +51,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statisticsIcon: {
-    width: 24,
-    height: 24,
+    width: 18.75,
+    height: 18.75,
+    padding: 8,
     marginRight: 8,
-  }
+  },
+  statisticsNumberText: {
+    marginRight: 16,
+    color: '#536471',
+  },
 });

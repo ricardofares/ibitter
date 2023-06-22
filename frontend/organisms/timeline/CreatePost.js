@@ -16,7 +16,7 @@ export default function CreatePost({ navigation }) {
     try {
       const postResponse = await axios.post(`${GlobalConfig.apiUrl}/newpost`, {
         username: state.user.username,
-        content: content
+        content: content.trim(),
       });
 
       // Check if the post has been created successfully.

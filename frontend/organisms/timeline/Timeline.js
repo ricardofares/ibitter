@@ -120,8 +120,13 @@ export default function Timeline({ navigation }) {
     <View style={styles.postContainer}>
       <View style={styles.postHeaderContainer}>
         <CourseImage username={post.username} />
-        <Text style={styles.postHeaderUsername}>{post.username}</Text>
-        <Text style={styles.postHeaderTime}>&#8226; {timeDiff(post.posted_at, new Date())}</Text>
+        <View style={{ marginLeft: 8, flexDirection: 'column' }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={styles.postHeaderName}>{post.name}</Text>
+            <Text style={styles.postHeaderTime}>&#8226; {timeDiff(post.posted_at, new Date())}</Text>
+          </View>
+          <Text style={styles.postHeaderUsername}>@{post.username}</Text>
+        </View>
       </View>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Reply', { post })}>
         <View>
@@ -273,15 +278,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  postHeaderUsername: {
+  postHeaderName: {
     fontWeight: 'bold',
-    marginLeft: 8,
+  },
+  postHeaderUsername: {
+    opacity: 0.50,
   },
   postHeaderTime: {
     marginLeft: 8,
     color: '#a0a0a0',
   },
   postContent: {
+    paddingLeft: 42,
     paddingTop: 8,
     paddingBottom: 8,
     textAlign: 'justify',
