@@ -1,7 +1,7 @@
 import React from 'react';
 import GlobalStyles from '../config';
 import Input from '../atoms/Input';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, ScrollView, Text } from 'react-native';
 
 export default function ContentArea({ label, content, setContent, maxLength }) {
   /// \brief Updates the content whenever the content textt input changes.
@@ -21,7 +21,9 @@ export default function ContentArea({ label, content, setContent, maxLength }) {
   };
 
   return (
-    <View>
+    <ScrollView
+      automaticallyAdjustKeyboardInsets={true}
+    >
       <Input
         label={label}
         settings={{
@@ -31,7 +33,7 @@ export default function ContentArea({ label, content, setContent, maxLength }) {
         }}
       />
       <Text style={styles.characterCountText}>{content.length}/{maxLength}</Text>
-    </View>
+    </ScrollView>
   );
 }
 

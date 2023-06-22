@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import IbitterStackScreen from '../../atoms/stack/IbitterStackScreen';
-import Input from '../../atoms/Input';
 import Button from '../../atoms/Button';
 import ContentArea from '../../molecules/ContentArea';
 import GlobalStyles from '../../styles';
