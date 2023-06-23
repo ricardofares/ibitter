@@ -21,6 +21,7 @@ const userAPI = require('./api/user.js')(app);
 const authAPI = require('./api/auth.js')(app);
 const postAPI = require('./api/post.js')(app);
 const likesAPI = require('./api/likes.js')(app);
+const chatsAPI = require('./api/chats.js')(app);
 
 // Update the application properties in `app` to be used
 // outside this file.
@@ -30,6 +31,7 @@ app.api = {
   auth: authAPI,
   post: postAPI,
   likes: likesAPI,
+  chats: chatsAPI,
 };
 
 // Adds a middleware that only parsers `json`.

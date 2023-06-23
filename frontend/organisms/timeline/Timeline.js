@@ -4,6 +4,7 @@ import GlobalConfig from '../../config';
 import PostStatistics from '../../molecules/PostStatistics';
 import RepliedContent from './RepliedContent';
 import CourseImage from '../../atoms/CourseImage';
+import Header from '../../molecules/Header';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -160,17 +161,18 @@ export default function Timeline({ navigation }) {
 
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.headerContainer}>
-        <CourseImage
-          style={styles.userIcon}
-          username={state.user.username}
-        />
-        <Text style={styles.headerTitle}>@{state.user.username || 'Username Placeholder'}</Text>
-        <Image
-          style={styles.sendIcon}
-          source={require('../../assets/images/send.png')}
-        />
-      </View>
+      <Header
+        RightHeaderComponent={
+          <TouchableWithoutFeedback
+            onPress={() => navigation.push('ChatList')}
+          >
+            <Image
+              style={styles.sendIcon}
+              source={require('../../assets/images/send.png')}
+            />
+          </TouchableWithoutFeedback>
+        }
+      />
       <View style={styles.navigatorContainer}>
         <TouchableWithoutFeedback onPress={() => setCurrentTab('ForYou')}>
           <View style={styles.navigatorTabContainer}>
