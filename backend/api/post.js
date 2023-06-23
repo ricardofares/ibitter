@@ -17,7 +17,7 @@ module.exports = app => {
         (SELECT COUNT(*) FROM posts WHERE retweet_of = p.id) AS retweets_count,
         (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked,
         (SELECT COUNT(*) > 0 FROM posts WHERE username = '${username}' AND retweet_of = p.id) AS i_retweet,
-        (SELECT u.name FROM users AS u WHERE u.username = '${username}') AS name
+        (SELECT u.name FROM users AS u WHERE u.username = p.username) AS name
         FROM posts AS p
         ${afterAt === undefined ? '' : `WHERE p.posted_at < '${afterAt}'`}
         ORDER BY posted_at DESC
