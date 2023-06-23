@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
 
   },
   headerContainer: {
-    paddingTop: GlobalStyles.paddingTop,
     paddingLeft: GlobalStyles.paddingLeft,
     paddingRight: GlobalStyles.paddingRight,
     flexDirection: 'row',
