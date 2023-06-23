@@ -5,4 +5,5 @@ export default {
   quaternaryColor: '#5b606b',
   paddingLeft: 16,
   paddingRight: 16,
+  paddingTop: 16,
 };
