@@ -115,6 +115,7 @@ export default function Chat({ navigation, route }) {
     <View>
       <View style={{
         padding: 8,
+        marginTop: 8,
         paddingBottom: 16,
         flexDirection: 'row',
         alignItems: 'center',

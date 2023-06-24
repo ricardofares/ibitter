@@ -1,14 +1,12 @@
 import React from 'react';
-import SVG from '../../../svg';
-import { StyleSheet, View, Text } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+import { StyleSheet, View, Text, Image } from 'react-native';
 
 export default function NoMessageChatList() {
   return (
     <View style={styles.noMessageContainer}>
-      <SvgXml
+      <Image
         style={{ width: 120, height: 120, }}
-        xml={SVG.envelopeFilledXml}
+        source={require('../../../assets/images/envelope-filled-black.png')}
       />
       <Text style={styles.noMessageContainerText}>Você ainda não possui nenhum mensagens :(</Text>
     </View>
