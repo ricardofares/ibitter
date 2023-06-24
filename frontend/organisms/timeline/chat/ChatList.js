@@ -8,8 +8,10 @@ import axios from 'axios';
 import { IbitterContext } from '../../providers/IbitterProvider';
 import { StyleSheet, View, Text, FlatList } from 'react-native';
 
-export default function ChatList({ navigation }) {
+export default function ChatList({ navigation, route }) {
+  const { drawerNavigation } = route.params;
   const { state } = useContext(IbitterContext);
+
   const [chatList, setChatList] = useState([]);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function ChatList({ navigation }) {
   return (
     <View>
       <Header
+        drawerNavigation={drawerNavigation}
         headerContainerStyle={{
           paddingBottom: 8,
           borderBottomWidth: 1,

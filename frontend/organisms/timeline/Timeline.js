@@ -11,8 +11,10 @@ import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpaci
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
 
-export default function Timeline({ navigation }) {
+export default function Timeline({ navigation, route }) {
+  const { drawerNavigation } = route.params;
   const { state, dispatch } = useContext(IbitterContext);
+
   const [posts, setPosts] = useState([]);
   const [currentTab, setCurrentTab] = useState('ForYou');
 
@@ -163,6 +165,7 @@ export default function Timeline({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <Header
+        drawerNavigation={drawerNavigation}
         RightHeaderComponent={
           <TouchableWithoutFeedback
             onPress={() => navigation.push('ChatList')}

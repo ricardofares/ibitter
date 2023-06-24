@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import IbitterProvider, { IbitterContext } from './organisms/providers/IbitterProvider';
 import AuthStack from './organisms/auth/AuthStack';
 import TimelineStack from './organisms/timeline/TimelineStack';
+import TimelineDrawer from './organisms/timeline/TimelineDrawer';
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
@@ -21,7 +22,7 @@ function AppScreen() {
   const { state } = useContext(IbitterContext);
   return (
     <>
-      {state.isLoggedIn ? <TimelineStack /> : <AuthStack />}
+      {state.isLoggedIn ? <TimelineDrawer /> : <AuthStack />}
     </>
   );
 }

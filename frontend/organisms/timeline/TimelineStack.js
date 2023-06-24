@@ -10,7 +10,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-export default function TimelineStack() {
+export default function TimelineStack({ navigation }) {
 	return (
 		<Stack.Navigator
 			screenOptions={{
@@ -18,15 +18,15 @@ export default function TimelineStack() {
 				headerShadowVisible: false,
 				contentStyle: {
 					backgroundColor: GlobalStyles.secondaryColor,
-				}
+				},
 			}}
 		>
-			<Stack.Screen name="Timeline" component={Timeline} />
-			<Stack.Screen name="CreatePost" component={CreatePost} />
-			<Stack.Screen name="Reply" component={Reply} />
-			<Stack.Screen name="ChatList" component={ChatList} />
-			<Stack.Screen name="Chat" component={Chat} />
-			<Stack.Screen name="SendMessage" component={SendMessage} />
+			<Stack.Screen name="Timeline" component={Timeline} initialParams={{ drawerNavigation: navigation }} />
+			<Stack.Screen name="CreatePost" component={CreatePost} initialParams={{ drawerNavigation: navigation }} />
+			<Stack.Screen name="Reply" component={Reply} initialParams={{ drawerNavigation: navigation }} />
+			<Stack.Screen name="ChatList" component={ChatList} initialParams={{ drawerNavigation: navigation }} />
+			<Stack.Screen name="Chat" component={Chat} initialParams={{ drawerNavigation: navigation }} />
+			<Stack.Screen name="SendMessage" component={SendMessage} initialParams={{ drawerNavigation: navigation }} />
 		</Stack.Navigator>
 	);
 }
