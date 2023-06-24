@@ -8,6 +8,7 @@ import Chat from './chat/Chat';
 import SendMessage from './chat/SendMessage';
 import Configuration from './configuration/Configuration';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import User from './user/User';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function TimelineStack({ navigation }) {
 			<Stack.Screen name="Chat" component={Chat} initialParams={{ drawerNavigation: navigation }} />
 			<Stack.Screen name="SendMessage" component={SendMessage} initialParams={{ drawerNavigation: navigation }} />
 			<Stack.Screen name="Configuration" component={Configuration} initialParams={{ drawerNavigation: navigation }} />
+			<Stack.Screen name="User" component={User} />
 		</Stack.Navigator>
 	);
 }

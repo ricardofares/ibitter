@@ -18,6 +18,9 @@ const defaultState = {
 	/// \brief Contains all loaded posts from the database.
 	posts: undefined,
 
+    /// \brief Contains the choosen user username for the User window.
+    choosenUser: undefined,
+
 	/// \brief Represents the datetime of the last timeline update.
 	///
 	/// This property holds the timestamp indicating the datetime of the most recent timeline update.

@@ -7,7 +7,7 @@ import CourseImage from '../../atoms/CourseImage';
 import Header from '../../molecules/Header';
 import CreatePostIcon from './CreatePostIcon';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
 
@@ -160,7 +160,9 @@ export default function Timeline({ navigation, route }) {
           : <></>
       }
       <View style={styles.postHeaderContainer}>
+        <TouchableOpacity onPress={() => goToUserPage(post.username)}>
         <CourseImage username={post.username} />
+        </TouchableOpacity>
         <View style={{ marginLeft: 8, flexDirection: 'column' }}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={styles.postHeaderName}>{post.name}</Text>
@@ -183,11 +185,18 @@ export default function Timeline({ navigation, route }) {
       <PostStatistics navigation={navigation} state={state} dispatch={dispatch} post={post} />
     </View>;
 
+    const goToUserPage = (username) => {
+        state.choosenUser = username
+
+        navigation.navigate('User')
+    }
+
 
   return (
     <View style={styles.mainContainer}>
       <Header
         drawerNavigation={drawerNavigation}
+        navigation={navigation}
         RightHeaderComponent={
           <TouchableWithoutFeedback
             onPress={() => navigation.push('ChatList')}
