@@ -21,6 +21,7 @@ export default function Chat({ navigation, route }) {
 
   const [messages, setMessages] = useState([]);
   const [content, setContent] = useState('');
+  const [lastTimeMessagesUpdate, setLastTimeMessagesUpdate] = useState(Date.now());
 
   useEffect(() => {
     /// Catch the messages that the user sent to the recipient.
@@ -50,7 +51,7 @@ export default function Chat({ navigation, route }) {
         /// Catch an unexpecteed error.
         console.error('unexpected error in useEffect in Chat.js: ', e);
       });
-  }, []);
+  }, [lastTimeMessagesUpdate]);
 
   const createMessage = () => {
     axios.post(`${GlobalConfig.apiUrl}/createmessage`, {
@@ -61,6 +62,9 @@ export default function Chat({ navigation, route }) {
       .then(_ => {
         /// Clear the content that has just been sent.
         setContent('');
+
+        /// Update the instant of the last messages updation.
+        setLastTimeMessagesUpdate(Date.now());
       })
       .catch(e => {
         /// Catch an unexpected error.
