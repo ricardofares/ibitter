@@ -6,7 +6,7 @@ import NoMessageChatList from './NoMessageChatList';
 import SendMessageIcon from './SendMessageIcon';
 import axios from 'axios';
 import { IbitterContext } from '../../providers/IbitterProvider';
-import { StyleSheet, View, Text, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 
 export default function ChatList({ navigation, route }) {
   const { drawerNavigation } = route.params;

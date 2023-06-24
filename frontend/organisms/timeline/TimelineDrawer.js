@@ -63,7 +63,9 @@ const CustomTimelineDrawerContent = ({ navigation }) => {
               <Text style={styles.iconLabel}>Mensagens</Text>
             </View>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.jumpTo('TimelineStack', { screen: 'Configuration' })}
+          >
             <View style={styles.listItem}>
               <Image
                 style={styles.icon}

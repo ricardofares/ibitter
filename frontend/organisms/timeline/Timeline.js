@@ -7,7 +7,7 @@ import CourseImage from '../../atoms/CourseImage';
 import Header from '../../molecules/Header';
 import CreatePostIcon from './CreatePostIcon';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
 
@@ -67,7 +67,7 @@ export default function Timeline({ navigation, route }) {
 
     // Call the loadAllPosts function to fetch and load all the posts from the database.
     loadAllPosts();
-  }, [state.lastTimelineUpdate]);
+  }, [state.lastUpdate, state.lastTimelineUpdate]);
 
   /// \brief Loads more posts from the server.
   ///

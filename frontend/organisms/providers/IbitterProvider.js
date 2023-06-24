@@ -26,6 +26,8 @@ const defaultState = {
 	/// \remarks The value of this property gets updated whenever the timeline data is refreshed or modified.
 	///				   It can be used to track the timing of updates and synchronize the application's behavior accordingly.
 	lastTimelineUpdate: undefined,
+
+	lastUpdate: undefined,
 };
 
 const actions = {
@@ -40,8 +42,20 @@ const actions = {
 		console.log('timeline update');
 		return {
 			...state,
-			lastTimelineUpdate: new Date(),
+			lastTimelineUpdate: Date.now(),
 		}
+	},
+	'DO_UPDATE': (state, payload) => {
+		return {
+			...state,
+			lastUpdate: Date.now()
+		}
+	},
+	'DO_USER_UPDATE': (state, payload) => {
+		return {
+			...state,
+			user: payload.user
+		};
 	},
 	/// Dispatch an action to update the posts in the application state.
 	///
