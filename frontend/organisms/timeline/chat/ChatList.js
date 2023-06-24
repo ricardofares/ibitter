@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import Header from '../../../molecules/Header';
 import GlobalConfig from '../../../config';
 import ChatItem from './ChatItem';
+import NoMessageChatList from './NoMessageChatList';
+import SendMessageIcon from './SendMessageIcon';
 import axios from 'axios';
 import { IbitterContext } from '../../providers/IbitterProvider';
 import { StyleSheet, View, Text, FlatList } from 'react-native';
-import NoMessageChatList from './NoMessageChatList';
-export default function ChatList() {
+
+export default function ChatList({ navigation }) {
   const { state } = useContext(IbitterContext);
   const [chatList, setChatList] = useState([]);
 
@@ -37,9 +39,10 @@ export default function ChatList() {
           :
           <FlatList
             data={chatList}
-            renderItem={({ item }) => <ChatItem chat={item} />}
+            renderItem={({ item }) => <ChatItem navigation={navigation} chat={item} />}
           />
       }
+      <SendMessageIcon navigation={navigation} />
     </View>
   );
 }

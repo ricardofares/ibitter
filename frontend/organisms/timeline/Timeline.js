@@ -5,6 +5,7 @@ import PostStatistics from '../../molecules/PostStatistics';
 import RepliedContent from './RepliedContent';
 import CourseImage from '../../atoms/CourseImage';
 import Header from '../../molecules/Header';
+import CreatePostIcon from './CreatePostIcon';
 import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -202,15 +203,7 @@ export default function Timeline({ navigation }) {
         }
         onEndReached={loadMorePosts}
       />
-      <TouchableOpacity
-        style={{ position: 'absolute', marginTop: '170%', left: '80%' }}
-        activeOpacity={0.75}
-        onPress={() => navigation.navigate('CreatePost')}
-      >
-        <View style={styles.addPostIconContainer}>
-          <Text style={styles.addPostIcon}>+</Text>
-        </View>
-      </TouchableOpacity>
+      <CreatePostIcon navigation={navigation} />
     </View>
   );
 }
@@ -266,27 +259,6 @@ const styles = StyleSheet.create({
   navigatorActiveTabTitle: {
     backgroundColor: 'white',
     color: 'black',
-  },
-  addPostIconContainer: {
-    position: 'absolute',
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 16,
-    paddingRight: 16,
-    borderRadius: 50,
-    height: 60,
-    width: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'black',
-    shadowColor: '#171717',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  addPostIcon: {
-    color: 'white',
-    fontSize: 32,
   },
   postContainer: {
     marginTop: 16,
