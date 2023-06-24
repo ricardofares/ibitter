@@ -24,6 +24,24 @@ export default function Chat({ navigation, route }) {
   const [lastTimeMessagesUpdate, setLastTimeMessagesUpdate] = useState(Date.now());
 
   useEffect(() => {
+    /// Create an interval that runs a function repeatedly to fetch the messages
+    /// from the chat between `from` and `to` every two seconds.
+    const interval = setInterval(() => {
+      const currentTime = Date.now();
+
+      /// Update the last time the message has updated.
+      setLastTimeMessagesUpdate(currentTime);
+
+      /// Print a message to the application's standard output.
+      console.log(`Messages from ${from} to ${to} are updated [${currentTime}].`);
+    }, 2000);
+
+    /// Once the component did unmount, the interval is cleared to prevent the
+    /// message updatign while the user is out of the chat screen.
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     /// Catch the messages that the user sent to the recipient.
     axios.get(`${GlobalConfig.apiUrl}/getchatmessages?from=${from}&to=${to}`)
       .then(firstResponse => {
@@ -124,21 +142,19 @@ export default function Chat({ navigation, route }) {
           }}
         />
       </View>
+      <ContentArea
+        style={{ marginBottom: 8 }}
+        inputStyle={{ borderWidth: 8, borderBottomWidth: 0, borderColor: 'white', }}
+        label="Conteúdo"
+        content={content}
+        setContent={setContent}
+        maxLength={100}
+      />
       <FlatList
         data={messages}
         style={{ height: '100%', }}
         renderItem={({ item }) => renderMessage(item)}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        ListHeaderComponent={
-          <ContentArea
-            style={{ marginBottom: 8 }}
-            inputStyle={{ borderWidth: 8, borderBottomWidth: 0, borderColor: 'white', }}
-            label="Conteúdo"
-            content={content}
-            setContent={setContent}
-            maxLength={100}
-          />
-        }
+        contentContainerStyle={{ paddingBottom: '50%' }}
       />
     </View>
   );
