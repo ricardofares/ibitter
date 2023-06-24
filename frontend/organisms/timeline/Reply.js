@@ -7,8 +7,9 @@ import ContentArea from '../../molecules/ContentArea';
 import Button from '../../atoms/Button';
 import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
-import { StyleSheet, View, Text, Alert, Keyboard, TouchableWithoutFeedback, Image } from 'react-native';
+import { StyleSheet, View, Text, Alert, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
+import { goToUserPage } from './user/User';
 
 export default function Reply({ navigation, route }) {
   const { state, dispatch } = useContext(IbitterContext);
@@ -104,7 +105,9 @@ export default function Reply({ navigation, route }) {
         ListHeaderComponent={
           <>
             <View style={styles.userInfoContainer}>
-              <CourseImage username={post.username} />
+              <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
+                <CourseImage username={post.username} />
+              </TouchableOpacity>
               <View style={{ marginLeft: 8, flexDirection: 'column', justifyContent: 'center' }} >
                 <Text style={{ fontWeight: 'bold' }}>{name}</Text>
                 <Text style={{ color: '#a0a0a0' }}>@{post.username}</Text>

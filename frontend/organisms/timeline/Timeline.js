@@ -10,6 +10,7 @@ import axios from 'axios';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
+import { goToUserPage } from './user/User';
 
 export default function Timeline({ navigation, route }) {
   const { drawerNavigation } = route.params;
@@ -160,7 +161,7 @@ export default function Timeline({ navigation, route }) {
           : <></>
       }
       <View style={styles.postHeaderContainer}>
-        <TouchableOpacity onPress={() => goToUserPage(post.username)}>
+        <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
         <CourseImage username={post.username} />
         </TouchableOpacity>
         <View style={{ marginLeft: 8, flexDirection: 'column' }}>
@@ -184,12 +185,6 @@ export default function Timeline({ navigation, route }) {
       }
       <PostStatistics navigation={navigation} state={state} dispatch={dispatch} post={post} />
     </View>;
-
-    const goToUserPage = (username) => {
-        state.choosenUser = username
-
-        navigation.navigate('User')
-    }
 
 
   return (

@@ -29,6 +29,7 @@ export default function ChatList({ navigation, route }) {
   return (
     <View>
       <Header
+        navigation={navigation}
         drawerNavigation={drawerNavigation}
         headerContainerStyle={{
           paddingBottom: 8,

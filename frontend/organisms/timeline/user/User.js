@@ -3,27 +3,21 @@ import GlobalStyles from "../../../styles"
 import Header from "../../../molecules/Header";
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { StyleSheet, View, Image, TouchableWithoutFeedback, FlatList, Text } from 'react-native';
 import { IbitterContext } from '../../providers/IbitterProvider';
-import Input from '../../../atoms/Input';
-import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, TouchableWithoutFeedback, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import CourseImage from '../../../atoms/CourseImage';
 import PostStatistics from '../../../molecules/PostStatistics';
 import RepliedContent from '../RepliedContent';
 import { timeDiff } from '../../../utils';
 
+export function goToUserPage(state, username, navigation) {
+    state.choosenUser = username
+    navigation.navigate('User')
+}
 
 export default function User({ navigation }) {
     const { state, dispatch } = useContext(IbitterContext);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
     const [posts, setPosts] = useState([])
-    // const [age, setAge] = useState("");
-    function goToUserPage(username) {
-        state.choosenUser = username
-
-        navigation.navigate('User')
-    }
 
     function postIsFromUser(post) {
         return (post.username === state.choosenUser)
@@ -47,13 +41,6 @@ export default function User({ navigation }) {
 
                 // Update the state of the component with the received post data.
                 setPosts(postResponse.data.filter(postIsFromUser));
-
-                dispatch({
-                    type: 'UPDATE_POSTS',
-                    payload: {
-                        posts: postResponse.data,
-                    },
-                });
             } catch (e) {
                 // Display an alert to the user informing them about the server being offline.
                 if (e.message === 'Network Error') {
@@ -63,7 +50,6 @@ export default function User({ navigation }) {
             }
 
         };
-        loadUser();
         loadUserPosts()
     }, [])
 
@@ -86,7 +72,7 @@ export default function User({ navigation }) {
                     : <></>
             }
             <View style={styles.postHeaderContainer}>
-                <TouchableOpacity onPress={() => goToUserPage(post.username)}>
+                <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
                     <CourseImage username={post.username} />
                 </TouchableOpacity>
                 <View style={{ marginLeft: 8, flexDirection: 'column' }}>
@@ -116,16 +102,6 @@ export default function User({ navigation }) {
             <Header
                 username={state.choosenUser}
                 navigation={navigation}
-                RightHeaderComponent={
-                    <TouchableWithoutFeedback
-                        onPress={() => navigation.push('ChatList')}
-                    >
-                        <Image
-                            style={styles.sendIcon}
-                            source={require('../../../assets/images/send.png')}
-                        />
-                    </TouchableWithoutFeedback>
-                }
             />
             <FlatList
                 data={posts}
