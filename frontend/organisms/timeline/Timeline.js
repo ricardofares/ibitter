@@ -120,6 +120,27 @@ export default function Timeline({ navigation, route }) {
     }
   };
 
+  const renderPostContent = content => {
+    const imageStartIndex = content.indexOf('[');
+    const imageEndIndex = content.indexOf(']');
+
+    const beforeImageContent = content.substring(0, imageStartIndex);
+    const imageContent = content.substring(imageStartIndex + 1, imageEndIndex);
+    const afterImageContent = content.substring(imageEndIndex + 1, content.length);
+
+    if (imageContent.length > 0) {
+      return (
+        <>
+          <Text style={styles.postContent}>{beforeImageContent}</Text>
+          <Image style={styles.postImage} src={imageContent} />
+          <Text style={styles.postContent}>{afterImageContent}</Text>
+        </>
+      );
+    } else {
+      return <Text style={styles.postContent}>{content}</Text>;
+    }
+  };
+
   const renderPost = post =>
     <View style={styles.postContainer}>
       {
@@ -149,8 +170,9 @@ export default function Timeline({ navigation, route }) {
         </View>
       </View>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Reply', { post })}>
-        <View>
-          <Text style={styles.postContent}>{post.content}</Text>
+        <View style={{ flex: 1 }}>
+          {/*<Text style={styles.postContent}>{post.content}</Text>*/}
+          {renderPostContent(post.content)}
         </View>
       </TouchableWithoutFeedback>
       {post.reply_to ?
@@ -302,5 +324,12 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 8,
+  },
+  postImage: {
+    width: '85%',
+    height: 400,
+    resizeMode: 'stretch',
+    marginLeft: 40,
+    borderRadius: 10,
   },
 });

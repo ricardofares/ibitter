@@ -40,6 +40,27 @@ export default function RepliedContent({ navigation, repliedPostId }) {
     loadRepliedPost();
   }, []);
 
+  const renderPostContent = content => {
+    const imageStartIndex = content.indexOf('[');
+    const imageEndIndex = content.indexOf(']');
+
+    const beforeImageContent = content.substring(0, imageStartIndex);
+    const imageContent = content.substring(imageStartIndex + 1, imageEndIndex);
+    const afterImageContent = content.substring(imageEndIndex + 1, content.length);
+
+    if (imageContent.length > 0) {
+      return (
+        <>
+          <Text style={styles.postContent}>{beforeImageContent}</Text>
+          <Image style={styles.postImage} src={imageContent} />
+          <Text style={styles.postContent}>{afterImageContent}</Text>
+        </>
+      );
+    } else {
+      return <Text style={styles.postContent}>{content}</Text>;
+    }
+  };
+
   if (isBusy) {
     return <ActivityIndicator />;
   } else {
@@ -55,7 +76,7 @@ export default function RepliedContent({ navigation, repliedPostId }) {
                 <Text style={styles.postHeaderUsername}>{repliedPost.username}</Text>
                 <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
               </View>
-              <Text style={styles.repliedContent}>{repliedPost.content}</Text>
+              {renderPostContent(repliedPost.content)}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -93,5 +114,18 @@ const styles = StyleSheet.create({
   repliedContent: {
     paddingTop: 8,
     paddingBottom: 8,
+  },
+  postContent: {
+    marginLeft: 32,
+    color: '#191919',
+    fontSize: 14,
+    textAlign: 'justify'
+  },
+  postImage: {
+    width: '111.5%',
+    height: 400,
+    resizeMode: 'stretch',
+    marginLeft: -16,
+    borderRadius: 10,
   },
 });
