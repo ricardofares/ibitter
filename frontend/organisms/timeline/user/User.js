@@ -9,6 +9,7 @@ import CourseImage from '../../../atoms/CourseImage';
 import PostStatistics from '../../../molecules/PostStatistics';
 import RepliedContent from '../RepliedContent';
 import { timeDiff } from '../../../utils';
+import Button from '../../../atoms/Button';
 
 export function goToUserPage(state, username, navigation) {
     state.choosenUser = username
@@ -18,6 +19,7 @@ export function goToUserPage(state, username, navigation) {
 export default function User({ navigation }) {
     const { state, dispatch } = useContext(IbitterContext);
     const [posts, setPosts] = useState([])
+    const [following, setFollowing] = useState(false)
 
     function postIsFromUser(post) {
         return (post.username === state.choosenUser)
@@ -50,8 +52,59 @@ export default function User({ navigation }) {
             }
 
         };
+
+        setFollowing(isFollowed())
         loadUserPosts()
     }, [])
+
+  const isFollowed = async () => {
+      try {
+        const followersResponse = await axios.get(`${GlobalConfig.apiUrl}/followers?username=${state.user.username}`);
+
+        for (const f of followersResponse.data) {
+            if (f.followed === state.choosenUser) {
+                return true
+            }
+        }
+      } catch (e) {
+        // Display an alert to the user informing them about the server being offline.
+        if (e.message === 'Network Error') {
+          Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+          return;
+        }
+      }
+      return false
+  }
+
+  const unfollow = async () => {
+      try {
+          if (!state.choosenUser !== state.user.username) {
+              const followResponse = await axios.post(`${GlobalConfig.apiUrl}/unfollow?follower=${state.user.username}&followed=${state.choosenUser}`);
+              setFollowing(false)
+          }
+      } catch (e) {
+        // Display an alert to the user informing them about the server being offline.
+        if (e.message === 'Network Error') {
+          Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+          return;
+        }
+      }
+  }
+
+  const follow = async () => {
+      try {
+          if (!state.choosenUser !== state.user.username) {
+              const followResponse = await axios.post(`${GlobalConfig.apiUrl}/follow?follower=${state.user.username}&followed=${state.choosenUser}`);
+              setFollowing(true)
+          }
+      } catch (e) {
+        // Display an alert to the user informing them about the server being offline.
+        if (e.message === 'Network Error') {
+          Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+          return;
+        }
+      }
+  }
 
     const renderPost = post =>
         <View style={styles.postContainer}>
@@ -104,6 +157,13 @@ export default function User({ navigation }) {
                 navigation={navigation}
             />
             <FlatList
+                ListHeaderComponent={
+                    state.user.username !== state.choosenUser ?
+        (following ?
+            <Button text="Desseguir" onPress={unfollow} /> :
+            <Button text="Seguir" onPress={follow} />)
+                    : <></>
+                }
                 data={posts}
                 renderItem={({ item }) => renderPost(item)}
                 // @Hack A hack to allow the user to scroll down until reach the bottom of the last post.

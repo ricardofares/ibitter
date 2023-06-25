@@ -9,7 +9,7 @@ export default function Header({ RightHeaderComponent, headerContainerStyle, dra
 
   return (
     <View style={[styles.headerContainer, headerContainerStyle]}>
-      <TouchableWithoutFeedback onPress={() => drawerNavigation.openDrawer()}>
+      <TouchableWithoutFeedback onPress={() => drawerNavigation ? drawerNavigation.openDrawer() : {}}>
         <View>
           <CourseImage
             style={styles.userIcon}
