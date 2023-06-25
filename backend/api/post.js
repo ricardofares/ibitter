@@ -9,7 +9,14 @@ module.exports = app => {
     if (!req.query.username)
       return res.status(400).json(messages['USER_NOT_SPECIFIED']);
 
-    const { username, afterAt } = req.query;
+    const { username, afterAt, untilAt } = req.query;
+
+    /// Check if the request has specified the time parameters `afterAt`
+    /// and `untilAt` at the same request. This cannot be done, since in
+    /// general will be returned an empty array. Therefore, a 400 Bad Request
+    /// response is sent.
+    if (afterAt !== undefined && untilAt !== undefined)
+      return res.status(400).json(messages['AFTER_AT_UNTIL_AT_SPECIFICIED']);
 
     app.knex.raw(`
         SELECT *,
@@ -20,12 +27,47 @@ module.exports = app => {
         (SELECT u.name FROM users AS u WHERE u.username = p.username) AS name
         FROM posts AS p
         ${afterAt === undefined ? '' : `WHERE p.posted_at < '${afterAt}'`}
+	${untilAt === undefined ? '' : `WHERE p.posted_at > '${untilAt}'`}
         ORDER BY posted_at DESC
         LIMIT 10
       `)
-      .then(query => { return res.status(200).json(query.rows); })
-      .catch(err => { return res.status(400).json(err); });
+      .then(query => res.status(200).json(query.rows))
+      .catch(e => { 
+	/// Catch an unexpected error.
+	console.error(`Unexpected error has occurred while ${username} was loading posts.`, e);
+
+	return res.status(400).json(e); 
+      });
   };
+
+  const followedPosts = (req, res) => {
+    if (!req.query.username)
+      return res.status(400).json(messages['USER_NOT_SPECIFIED']);
+
+    const { username, afterAt, untilAt } = req.query;
+    app.knex.raw(`
+        SELECT p.*,
+        (SELECT COUNT(*) FROM posts WHERE reply_to = p.id) AS messages_count,
+        (SELECT COUNT(*) FROM posts WHERE retweet_of = p.id) AS retweets_count,
+        (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked,
+        (SELECT COUNT(*) > 0 FROM posts WHERE username = '${username}' AND retweet_of = p.id) AS i_retweet,
+        (SELECT u.name FROM users AS u WHERE u.username = p.username) AS name
+        FROM followers AS fr
+        JOIN posts AS p ON fr.followed = p.username
+        WHERE fr.follower = '${username}'
+        ${afterAt === undefined ? '' : `AND p.posted_at < '${afterAt}'`}
+	${untilAt === undefined ? '' : `AND p.posted_at > '${untilAt}'`}
+        ORDER BY posted_at DESC
+        LIMIT 10
+	`)
+	  .then(query => res.status(200).json(query.rows))
+          .catch(e => { 
+            /// Catch an unexpected error.
+            console.error(`Unexpected error has occurred while ${username} was loading posts.`, e);
+
+            return res.status(400).json(e); 
+          });
+  }
 
   /// \brief Saves a post in the database.
   /// 
@@ -101,7 +143,7 @@ module.exports = app => {
         (SELECT COUNT(*) FROM posts WHERE retweet_of = p.id) AS retweets_count,
         (SELECT COUNT(*) > 0 FROM likes WHERE likes.username = '${username}' AND post_id = p.id) AS i_liked,
         (SELECT COUNT(*) > 0 FROM posts WHERE username = '${username}' AND retweet_of = p.id) AS i_retweet,
-        (SELECT u.name FROM users AS u WHERE u.username = '${username}') AS name
+        (SELECT u.name FROM users AS u WHERE u.username = p.username) AS name
         FROM posts AS p
         WHERE p.reply_to = ${postId}
         ORDER BY posted_at DESC
@@ -139,5 +181,5 @@ module.exports = app => {
       .catch(err => { return res.status(400).json(err); });
   };
 
-  return { save, load, fetchPostMessages, fetchPost };
+  return { save, load, fetchPostMessages, fetchPost, followedPosts };
 };
