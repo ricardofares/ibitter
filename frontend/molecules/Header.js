@@ -1,27 +1,31 @@
 import React, { useContext } from 'react';
 import GlobalStyles from '../styles';
 import CourseImage from '../atoms/CourseImage';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
 import { IbitterContext } from '../organisms/providers/IbitterProvider';
 
-export default function Header({ RightHeaderComponent, headerContainerStyle }) {
+export default function Header({ RightHeaderComponent, headerContainerStyle, drawerNavigation, username }) {
   const { state } = useContext(IbitterContext);
 
   return (
     <View style={[styles.headerContainer, headerContainerStyle]}>
-      <CourseImage
-        style={styles.userIcon}
-        username={state.user.username}
-      />
-      <Text style={styles.headerTitle}>@{state.user.username || 'Username Placeholder'}</Text>
+      <TouchableWithoutFeedback onPress={() => drawerNavigation ? drawerNavigation.openDrawer() : {}}>
+        <View>
+          <CourseImage
+            style={styles.userIcon}
+            username={username || state.user.username}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+      <Text style={styles.headerTitle}>@{username || state.user.username || 'Username Placeholder'}</Text>
       {RightHeaderComponent || <View style={{ width: 24, height: 24 }}></View>}
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   headerContainer: {
+    paddingTop: GlobalStyles.paddingTop,
     paddingLeft: GlobalStyles.paddingLeft,
     paddingRight: GlobalStyles.paddingRight,
     flexDirection: 'row',

@@ -7,7 +7,7 @@ import ContentArea from '../../molecules/ContentArea';
 import Button from '../../atoms/Button';
 import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
-import { StyleSheet, View, Text, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, Alert, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 
 export default function Reply({ navigation, route }) {
@@ -60,6 +60,27 @@ export default function Reply({ navigation, route }) {
     });
   };
 
+  const renderPostContent = content => {
+    const imageStartIndex = content.indexOf('[');
+    const imageEndIndex = content.indexOf(']');
+
+    const beforeImageContent = content.substring(0, imageStartIndex);
+    const imageContent = content.substring(imageStartIndex + 1, imageEndIndex);
+    const afterImageContent = content.substring(imageEndIndex + 1, content.length);
+
+    if (imageContent.length > 0) {
+      return (
+        <>
+          <Text style={styles.postContent}>{beforeImageContent}</Text>
+          <Image style={styles.postImage} src={imageContent} />
+          <Text style={styles.postContent}>{afterImageContent}</Text>
+        </>
+      );
+    } else {
+      return <Text style={styles.postContent}>{content}</Text>;
+    }
+  };
+
   return (
     <IbitterStackScreen
       navigation={navigation}
@@ -79,29 +100,33 @@ export default function Reply({ navigation, route }) {
         />
       }
     >
-      <View style={styles.userInfoContainer}>
-        <CourseImage username={post.username} />
-        <View style={{ marginLeft: 8, flexDirection: 'column', justifyContent: 'center' }} >
-          <Text style={{ fontWeight: 'bold' }}>{name}</Text>
-          <Text style={{ color: '#a0a0a0' }}>@{post.username}</Text>
-        </View>
-      </View>
-      <View style={{ marginTop: 8, marginBottom: 8 }} >
-        <Text style={{ marginLeft: 44, color: '#191919', fontSize: 16, textAlign: 'justify' }}>{post.content}</Text>
-      </View>
-      <PostStatistics post={post} />
       <ReplyMessageList
         ListHeaderComponent={
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ marginTop: 16, }}>
-              <ContentArea
-                label="Resposta"
-                content={content}
-                setContent={setContent}
-                maxLength={255}
-              />
+          <>
+            <View style={styles.userInfoContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('User', { choosenUser: post.username })}>
+                <CourseImage username={post.username} />
+              </TouchableOpacity>
+              <View style={{ marginLeft: 8, flexDirection: 'column', justifyContent: 'center' }} >
+                <Text style={{ fontWeight: 'bold' }}>{name}</Text>
+                <Text style={{ color: '#a0a0a0' }}>@{post.username}</Text>
+              </View>
             </View>
-          </TouchableWithoutFeedback>
+            <View style={{ marginTop: 8, marginBottom: 8 }} >
+              {renderPostContent(post.content)}
+            </View>
+            <PostStatistics post={post} />
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={{ marginTop: 16, }}>
+                <ContentArea
+                  label="Resposta"
+                  content={content}
+                  setContent={setContent}
+                  maxLength={255}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </>
         }
         navigation={navigation}
         username={state.user.username}
@@ -118,6 +143,19 @@ const styles = StyleSheet.create({
   userIcon: {
     width: 48,
     height: 48,
+    borderRadius: 10,
+  },
+  postContent: {
+    marginLeft: 44,
+    color: '#191919',
+    fontSize: 16,
+    textAlign: 'justify'
+  },
+  postImage: {
+    width: '85%',
+    height: 400,
+    resizeMode: 'stretch',
+    marginLeft: 40,
     borderRadius: 10,
   },
 });

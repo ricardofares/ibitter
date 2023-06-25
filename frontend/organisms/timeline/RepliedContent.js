@@ -5,6 +5,7 @@ import CourseImage from '../../atoms/CourseImage';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
+import UsernameToName from '../../atoms/Name';
 
 export default function RepliedContent({ navigation, repliedPostId }) {
   const { state } = useContext(IbitterContext);
@@ -40,6 +41,27 @@ export default function RepliedContent({ navigation, repliedPostId }) {
     loadRepliedPost();
   }, []);
 
+  const renderPostContent = content => {
+    const imageStartIndex = content.indexOf('[');
+    const imageEndIndex = content.indexOf(']');
+
+    const beforeImageContent = content.substring(0, imageStartIndex);
+    const imageContent = content.substring(imageStartIndex + 1, imageEndIndex);
+    const afterImageContent = content.substring(imageEndIndex + 1, content.length);
+
+    if (imageContent.length > 0) {
+      return (
+        <>
+          <Text style={styles.postContent}>{beforeImageContent}</Text>
+          <Image style={styles.postImage} src={imageContent} />
+          <Text style={styles.postContent}>{afterImageContent}</Text>
+        </>
+      );
+    } else {
+      return <Text style={styles.postContent}>{content}</Text>;
+    }
+  };
+
   if (isBusy) {
     return <ActivityIndicator />;
   } else {
@@ -52,13 +74,18 @@ export default function RepliedContent({ navigation, repliedPostId }) {
             <View style={styles.repliedContentContainer}>
               <View style={styles.postHeaderContainer}>
                 <CourseImage style={styles.userIcon} username={repliedPost.username} />
-                <Text style={styles.postHeaderUsername}>{repliedPost.username}</Text>
-                <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
+                <View style={{ marginLeft: 8, marginBottom: 8, }}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <UsernameToName style={{ fontWeight: 'bold', }} username={repliedPost.username} />
+                    <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
+                  </View>
+                  <Text style={{ opacity: 0.5 }}>@{repliedPost.username}</Text>
+                </View>
               </View>
-              <Text style={styles.repliedContent}>{repliedPost.content}</Text>
+              {renderPostContent(repliedPost.content)}
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback >
       </>
     );
   }
@@ -73,10 +100,6 @@ const styles = StyleSheet.create({
   postHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  postHeaderUsername: {
-    fontWeight: 'bold',
-    marginLeft: 8,
   },
   postHeaderTime: {
     marginLeft: 8,
@@ -93,5 +116,18 @@ const styles = StyleSheet.create({
   repliedContent: {
     paddingTop: 8,
     paddingBottom: 8,
+  },
+  postContent: {
+    marginLeft: 32,
+    color: '#191919',
+    fontSize: 14,
+    textAlign: 'justify'
+  },
+  postImage: {
+    width: '111.5%',
+    height: 400,
+    resizeMode: 'stretch',
+    marginLeft: -16,
+    borderRadius: 10,
   },
 });

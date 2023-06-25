@@ -5,15 +5,19 @@ import PostStatistics from '../../molecules/PostStatistics';
 import RepliedContent from './RepliedContent';
 import CourseImage from '../../atoms/CourseImage';
 import Header from '../../molecules/Header';
+import CreatePostIcon from './CreatePostIcon';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, Platform, Alert } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
 
-export default function Timeline({ navigation }) {
+export default function Timeline({ navigation, route }) {
+  const { drawerNavigation } = route.params;
   const { state, dispatch } = useContext(IbitterContext);
+
   const [posts, setPosts] = useState([]);
   const [currentTab, setCurrentTab] = useState('ForYou');
+  const [followedPosts, setFollowedPosts] = useState([]);
 
   useEffect(() => {
     /// \brief Loads all the posts from the database using the API.
@@ -31,9 +35,11 @@ export default function Timeline({ navigation }) {
       try {
         // Send a GET request to the API endpoint to retrieve all the posts
         const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}`);
+        const followedPostsResponse = await axios.get(`${GlobalConfig.apiUrl}/followedPosts?username=${state.user.username}`);
 
-        // Send a GEET request to thte API endpoint to retrieve all the likes made by this user.
+        // Send a GET request to thte API endpoint to retrieve all the likes made by this user.
         const likesResponse = await axios.get(`${GlobalConfig.apiUrl}/getlike?username=${state.user.username}`);
+
 
         for (const post of postResponse.data) {
           post.i_liked = false;
@@ -43,8 +49,10 @@ export default function Timeline({ navigation }) {
               post.i_liked = true;
         }
 
+
         // Update the state of the component with the received post data.
         setPosts(postResponse.data);
+        setFollowedPosts(followedPostsResponse.data);
 
         dispatch({
           type: 'UPDATE_POSTS',
@@ -64,7 +72,7 @@ export default function Timeline({ navigation }) {
 
     // Call the loadAllPosts function to fetch and load all the posts from the database.
     loadAllPosts();
-  }, [state.lastTimelineUpdate]);
+  }, [state.lastUpdate, state.lastTimelineUpdate]);
 
   /// \brief Loads more posts from the server.
   ///
@@ -82,10 +90,18 @@ export default function Timeline({ navigation }) {
   /// If an error occurs during the API request, the function catches the error and checks if it is a network error
   /// indicating the server being offline. In such cases, it displays an alert to the user, informing them about
   /// the server unavailability.
-  const loadMorePosts = async () => {
+  const loadMorePosts = async (newPosts) => {
     try {
+      let queryParameterConfiguration;
+
+      if (newPosts) {
+        queryParameterConfiguration = `untilAt=${posts[0].posted_at}`;
+      } else {
+        queryParameterConfiguration = `afterAt=${posts[posts.length - 1].posted_at}`;
+      }
+
       /// Construct the URL to fetch more posts using the apiUrl and query parameters.
-      const response = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}&afterAt=${posts[posts.length - 1].posted_at}`);
+      const response = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}&${queryParameterConfiguration}`);
 
       /// Send a GET request to the server to fetch the additional posts.
       const loadedPosts = response.data;
@@ -96,16 +112,27 @@ export default function Timeline({ navigation }) {
         return;
       }
 
-      setPosts([...posts, ...loadedPosts]);
+      if (newPosts) {
+        setPosts([...loadedPosts, ...posts]);
 
-      /// Dispatch an action to update the posts in the application state.
-      display({
-        type: 'UPDATE_POSTS',
-        payload: {
-          posts: [...posts, ...loadedPosts],
-        },
-      });
+        /// Dispatch an action to update the posts in the application state.
+        display({
+          type: 'UPDATE_POSTS',
+          payload: {
+            posts: [...loadedPosts, ...posts],
+          },
+        });
+      } else {
+        setPosts([...posts, ...loadedPosts]);
 
+        /// Dispatch an action to update the posts in the application state.
+        display({
+          type: 'UPDATE_POSTS',
+          payload: {
+            posts: [...posts, ...loadedPosts],
+          },
+        });
+      }
     } catch (e) {
       /// Handle errors that occur during the API request.
       /// Check if the error is due to the server being offline.
@@ -114,6 +141,83 @@ export default function Timeline({ navigation }) {
         Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
         return;
       }
+    }
+  };
+
+  const loadMoreFollowedPosts = async (newPosts) => {
+    try {
+      let queryParameterConfiguration;
+
+      if (newPosts) {
+        queryParameterConfiguration = `untilAt=${followedPosts[0].posted_at}`;
+      } else {
+        queryParameterConfiguration = `afterAt=${followedPosts[followedPosts.length - 1].posted_at}`;
+      }
+
+      /// Construct the URL to fetch more posts using the apiUrl and query parameters.
+      const response = await axios.get(`${GlobalConfig.apiUrl}/followedPosts?username=${state.user.username}&${queryParameterConfiguration}`);
+
+      /// Send a GET request to the server to fetch the additional posts.
+      const loadedPosts = response.data;
+
+      /// Check if there are no posts to be loaded from the database.
+      if (loadedPosts.length === 0) {
+        console.log('There is no more posts to be loaded');
+        return;
+      }
+
+      if (newPosts) {
+        setFollowedPosts([...loadedPosts, ...followedPosts]);
+
+        /// Dispatch an action to update the posts in the application state.
+        // display({
+        //   type: 'UPDATE_POSTS',
+        //   payload: {
+        //     posts: [...loadedPosts, ...posts],
+        //   },
+        // });
+      } else {
+        setFollowedPosts([...followedPosts, ...loadedPosts]);
+
+        /// Dispatch an action to update the posts in the application state.
+        // display({
+        //   type: 'UPDATE_POSTS',
+        //   payload: {
+        //     posts: [...posts, ...loadedPosts],
+        //   },
+        // });
+      }
+    } catch (e) {
+      /// Handle errors that occur during the API request.
+      /// Check if the error is due to the server being offline.
+      if (e.message === 'Network Error') {
+        /// Display an alert to the user informing them about the server being offline.
+        Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+        return;
+      }
+    }
+  };
+
+
+
+  const renderPostContent = content => {
+    const imageStartIndex = content.indexOf('[');
+    const imageEndIndex = content.indexOf(']');
+
+    const beforeImageContent = content.substring(0, imageStartIndex);
+    const imageContent = content.substring(imageStartIndex + 1, imageEndIndex);
+    const afterImageContent = content.substring(imageEndIndex + 1, content.length);
+
+    if (imageContent.length > 0) {
+      return (
+        <>
+          <Text style={styles.postContent}>{beforeImageContent}</Text>
+          <Image style={styles.postImage} src={imageContent} />
+          <Text style={styles.postContent}>{afterImageContent}</Text>
+        </>
+      );
+    } else {
+      return <Text style={styles.postContent}>{content}</Text>;
     }
   };
 
@@ -136,7 +240,9 @@ export default function Timeline({ navigation }) {
           : <></>
       }
       <View style={styles.postHeaderContainer}>
-        <CourseImage username={post.username} />
+        <TouchableOpacity onPress={() => navigation.navigate('User', { choosenUser: post.username })}>
+          <CourseImage username={post.username} />
+        </TouchableOpacity>
         <View style={{ marginLeft: 8, flexDirection: 'column' }}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={styles.postHeaderName}>{post.name}</Text>
@@ -146,8 +252,9 @@ export default function Timeline({ navigation }) {
         </View>
       </View>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Reply', { post })}>
-        <View>
-          <Text style={styles.postContent}>{post.content}</Text>
+        <View style={{ flex: 1 }}>
+          {/*<Text style={styles.postContent}>{post.content}</Text>*/}
+          {renderPostContent(post.content)}
         </View>
       </TouchableWithoutFeedback>
       {post.reply_to ?
@@ -162,6 +269,8 @@ export default function Timeline({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <Header
+        drawerNavigation={drawerNavigation}
+        navigation={navigation}
         RightHeaderComponent={
           <TouchableWithoutFeedback
             onPress={() => navigation.push('ChatList')}
@@ -189,7 +298,7 @@ export default function Timeline({ navigation }) {
       </View>
       <FlatList
         style={{ height: '100%' }}
-        data={posts}
+        data={currentTab === 'Following' ? followedPosts : posts}
         renderItem={({ item }) => renderPost(item)}
         // @Hack A hack to allow the user to scroll down until reach the bottom of the last post.
         //       Without that the user also can reach the last post, however, to reach the bottom
@@ -200,17 +309,23 @@ export default function Timeline({ navigation }) {
             <ActivityIndicator style={{ padding: 16 }} />
           </>
         }
-        onEndReached={loadMorePosts}
+        onEndReached={() => currentTab === 'ForYou' ? loadMorePosts(false) : loadMoreFollowedPosts(false)}
+        onScrollEndDrag={event => {
+          /// The content offset threshold, that is, the minimum offset the content should have
+          /// in the flat list to indicate that the user would like to fetch newer posts.
+          const contentOffsetThreshold = Platform.OS === 'ios' ? -15.0 : 0.0;
+
+          /// If the user drag the flat list content upon a specified threshold. Then,
+          /// this will indicate that the user would like to fetch newer posts.
+          ///
+          /// \note Note in this case that should be used `<=` instead of `<`, since in Android
+          ///       devices the content offset is capped at 0.
+          if (event.nativeEvent.contentOffset.y <= contentOffsetThreshold)
+            currentTab === 'ForYou' ? loadMorePosts(true) : loadMoreFollowedPosts(true);
+        }}
+        scrollEventThrottle={1000}
       />
-      <TouchableOpacity
-        style={{ position: 'absolute', marginTop: '180%', left: '85%' }}
-        activeOpacity={0.75}
-        onPress={() => navigation.navigate('CreatePost')}
-      >
-        <View style={styles.addPostIconContainer}>
-          <Text style={styles.addPostIcon}>+</Text>
-        </View>
-      </TouchableOpacity>
+      <CreatePostIcon navigation={navigation} />
     </View>
   );
 }
@@ -267,23 +382,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     color: 'black',
   },
-  addPostIconContainer: {
-    position: 'absolute',
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 16,
-    paddingRight: 16,
-    borderRadius: 50,
-    backgroundColor: 'black',
-    shadowColor: '#171717',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  addPostIcon: {
-    color: 'white',
-    fontSize: 32,
-  },
   postContainer: {
     marginTop: 16,
     paddingLeft: GlobalStyles.paddingLeft,
@@ -323,5 +421,12 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 8,
+  },
+  postImage: {
+    width: '85%',
+    height: 400,
+    resizeMode: 'stretch',
+    marginLeft: 40,
+    borderRadius: 10,
   },
 });

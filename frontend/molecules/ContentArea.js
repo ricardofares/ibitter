@@ -4,7 +4,7 @@ import Input from '../atoms/Input';
 import { StyleSheet, ScrollView, Text } from 'react-native';
 import { countNewLines } from '../utils';
 
-export default function ContentArea({ label, content, setContent, maxLength }) {
+export default function ContentArea({ label, content, setContent, maxLength, style, inputStyle }) {
   /// \brief Updates the content whenever the content textt input changes.
   ///
   /// This function acts a middleware that validates the `content` input.
@@ -27,8 +27,10 @@ export default function ContentArea({ label, content, setContent, maxLength }) {
   return (
     <ScrollView
       automaticallyAdjustKeyboardInsets={true}
+      style={style}
     >
       <Input
+        style={inputStyle}
         label={label}
         settings={{
           multiline: true,

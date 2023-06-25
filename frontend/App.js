@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import IbitterProvider, { IbitterContext } from './organisms/providers/IbitterProvider';
 import AuthStack from './organisms/auth/AuthStack';
 import TimelineStack from './organisms/timeline/TimelineStack';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import TimelineDrawer from './organisms/timeline/TimelineDrawer';
+import { StyleSheet, SafeAreaView, LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -19,20 +20,29 @@ import { StatusBar } from 'expo-status-bar';
 ///          context's values.
 function AppScreen() {
   const { state } = useContext(IbitterContext);
+
   return (
     <>
-      {state.isLoggedIn ? <TimelineStack /> : <AuthStack />}
+      {state.isLoggedIn ? <TimelineDrawer /> : <AuthStack />}
     </>
   );
 }
 
 export default function App() {
+  /// This warning occurs because the `react-navigation` think we could using
+  /// state persistence, deep linking etc. While it is being passed non-serializable
+  /// values. However, we are in fact not using any of state persistence, deep linking etc.,
+  /// such that we can ignore this log.
+  LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+  ]);
+
   return (
     <IbitterProvider>
       <NavigationContainer>
         <SafeAreaView style={styles.container}>
           <AppScreen />
-          <StatusBar style="black" />
+          <StatusBar style="black" hidden={true} />
         </SafeAreaView>
       </NavigationContainer>
     </IbitterProvider>
