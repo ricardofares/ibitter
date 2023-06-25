@@ -7,10 +7,9 @@ import CourseImage from '../../atoms/CourseImage';
 import Header from '../../molecules/Header';
 import CreatePostIcon from './CreatePostIcon';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, Platform } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, Platform, Alert } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
-import { goToUserPage } from './user/User';
 
 export default function Timeline({ navigation, route }) {
   const { drawerNavigation } = route.params;
@@ -199,7 +198,7 @@ export default function Timeline({ navigation, route }) {
     }
   };
 
-  
+
 
   const renderPostContent = content => {
     const imageStartIndex = content.indexOf('[');
@@ -241,7 +240,7 @@ export default function Timeline({ navigation, route }) {
           : <></>
       }
       <View style={styles.postHeaderContainer}>
-        <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
+        <TouchableOpacity onPress={() => navigation.navigate('User', { choosenUser: post.username })}>
           <CourseImage username={post.username} />
         </TouchableOpacity>
         <View style={{ marginLeft: 8, flexDirection: 'column' }}>

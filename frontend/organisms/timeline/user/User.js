@@ -4,35 +4,28 @@ import Header from "../../../molecules/Header";
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { IbitterContext } from '../../providers/IbitterProvider';
-import { StyleSheet, View, Image, TouchableWithoutFeedback, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, TouchableWithoutFeedback, FlatList, Text, TouchableOpacity, Alert } from 'react-native';
 import CourseImage from '../../../atoms/CourseImage';
 import PostStatistics from '../../../molecules/PostStatistics';
 import RepliedContent from '../RepliedContent';
 import { timeDiff } from '../../../utils';
 import Button from '../../../atoms/Button';
 
-export function goToUserPage(state, username, navigation) {
-    state.choosenUser = username
-    navigation.navigate('User')
-}
-
-export default function User({ navigation }) {
+export default function User({ navigation, route }) {
+    const { choosenUser } = route.params;
     const { state, dispatch } = useContext(IbitterContext);
     const [posts, setPosts] = useState([])
     const [following, setFollowing] = useState(false)
-
-    function postIsFromUser(post) {
-        return (post.username === state.choosenUser)
-    }
 
     useEffect(() => {
         const loadUserPosts = async () => {
             try {
                 // Send a GET request to the API endpoint to retrieve all the posts
-                const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.choosenUser}`)
+                const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${choosenUser}`)
 
-                // Send a GEET request to thte API endpoint to retrieve all the likes made by this user.
-                const likesResponse = await axios.get(`${GlobalConfig.apiUrl}/getlike?username=${state.choosenUser}`)
+                // Send a GET request to thte API endpoint to retrieve all the likes made by this user.
+                const likesResponse = await axios.get(`${GlobalConfig.apiUrl}/getlike?username=${choosenUser}`)
+
                 for (const post of postResponse.data) {
                     post.i_liked = false;
 
@@ -42,69 +35,98 @@ export default function User({ navigation }) {
                 }
 
                 // Update the state of the component with the received post data.
-                setPosts(postResponse.data.filter(postIsFromUser));
+                setPosts(postResponse.data.filter(post => post.username === choosenUser));
             } catch (e) {
                 // Display an alert to the user informing them about the server being offline.
                 if (e.message === 'Network Error') {
                     Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
                     return;
                 }
+
+                /// Catch unexpected error.
+                console.error(e);
             }
 
         };
 
-        setFollowing(isFollowed())
-        loadUserPosts()
+        checkFollowingStatus();
+        loadUserPosts();
     }, [])
 
-  const isFollowed = async () => {
-      try {
-        const followersResponse = await axios.get(`${GlobalConfig.apiUrl}/followers?username=${state.user.username}`);
+    const checkFollowingStatus = async () => {
+        try {
+            const followersResponse = await axios.get(`${GlobalConfig.apiUrl}/followers?username=${state.user.username}`);
 
-        for (const f of followersResponse.data) {
-            if (f.followed === state.choosenUser) {
-                return true
+            for (const f of followersResponse.data) {
+                if (f.followed === choosenUser) {
+                    setFollowing(true);
+                    return;
+                }
+            }
+        } catch (e) {
+            // Display an alert to the user informing them about the server being offline.
+            if (e.message === 'Network Error') {
+                Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+                return;
             }
         }
-      } catch (e) {
-        // Display an alert to the user informing them about the server being offline.
-        if (e.message === 'Network Error') {
-          Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
-          return;
-        }
-      }
-      return false
-  }
 
-  const unfollow = async () => {
-      try {
-          if (!state.choosenUser !== state.user.username) {
-              const followResponse = await axios.post(`${GlobalConfig.apiUrl}/unfollow?follower=${state.user.username}&followed=${state.choosenUser}`);
-              setFollowing(false)
-          }
-      } catch (e) {
-        // Display an alert to the user informing them about the server being offline.
-        if (e.message === 'Network Error') {
-          Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
-          return;
-        }
-      }
-  }
+        setFollowing(false);
+    }
 
-  const follow = async () => {
-      try {
-          if (!state.choosenUser !== state.user.username) {
-              const followResponse = await axios.post(`${GlobalConfig.apiUrl}/follow?follower=${state.user.username}&followed=${state.choosenUser}`);
-              setFollowing(true)
-          }
-      } catch (e) {
-        // Display an alert to the user informing them about the server being offline.
-        if (e.message === 'Network Error') {
-          Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
-          return;
+    const unfollow = async () => {
+        try {
+            const followResponse = await axios.post(`${GlobalConfig.apiUrl}/unfollow?follower=${state.user.username}&followed=${choosenUser}`);
+
+            setFollowing(false)
+        } catch (e) {
+            // Display an alert to the user informing them about the server being offline.
+            if (e.message === 'Network Error') {
+                Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+                return;
+            }
+
+            /// Catch unexpected error.
+            console.error(e);
         }
-      }
-  }
+    }
+
+    const follow = async () => {
+        try {
+            if (!choosenUser !== state.user.username) {
+                const followResponse = await axios.post(`${GlobalConfig.apiUrl}/follow?follower=${state.user.username}&followed=${choosenUser}`);
+                setFollowing(true)
+            }
+        } catch (e) {
+            // Display an alert to the user informing them about the server being offline.
+            if (e.message === 'Network Error') {
+                Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+                return;
+            }
+        }
+    }
+
+    const renderPostContent = content => {
+        const imageStartIndex = content.indexOf('[');
+        const imageEndIndex = content.indexOf(']');
+
+        const beforeImageContent = content.substring(0, imageStartIndex);
+        const imageContent = content.substring(imageStartIndex + 1, imageEndIndex);
+        const afterImageContent = content.substring(imageEndIndex + 1, content.length);
+
+        if (imageContent.length > 0) {
+            return (
+                <>
+                    <Text style={styles.postContent}>{beforeImageContent}</Text>
+                    <Image style={styles.postImage} src={imageContent} />
+                    <Text style={styles.postContent}>{afterImageContent}</Text>
+                </>
+            );
+        } else {
+            return <Text style={styles.postContent}>{content}</Text>;
+        }
+    };
+
 
     const renderPost = post =>
         <View style={styles.postContainer}>
@@ -125,7 +147,7 @@ export default function User({ navigation }) {
                     : <></>
             }
             <View style={styles.postHeaderContainer}>
-                <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
+                <TouchableOpacity onPress={() => navigation.navigate('User', { choosenUser: post.username })}>
                     <CourseImage username={post.username} />
                 </TouchableOpacity>
                 <View style={{ marginLeft: 8, flexDirection: 'column' }}>
@@ -138,7 +160,7 @@ export default function User({ navigation }) {
             </View>
             <TouchableWithoutFeedback onPress={() => navigation.navigate('Reply', { post })}>
                 <View>
-                    <Text style={styles.postContent}>{post.content}</Text>
+                    {renderPostContent(post.content)}
                 </View>
             </TouchableWithoutFeedback>
             {post.reply_to ?
@@ -153,28 +175,23 @@ export default function User({ navigation }) {
     return (
         <View style={styles.mainContainer}>
             <Header
-                username={state.choosenUser}
+                username={choosenUser}
                 navigation={navigation}
             />
             <FlatList
                 ListHeaderComponent={
-                    state.user.username !== state.choosenUser ?
-        (following ?
-            <Button text="Desseguir" onPress={unfollow} /> :
-            <Button text="Seguir" onPress={follow} />)
-                    : <></>
+                    state.user.username !== choosenUser ?
+                        (following ?
+                            <View style={{ padding: 16 }}><Button text="Desseguir" onPress={unfollow} /></View> :
+                            <View style={{ padding: 16 }}><Button text="Seguir" onPress={follow} /></View>)
+                        : <></>
                 }
                 data={posts}
                 renderItem={({ item }) => renderPost(item)}
                 // @Hack A hack to allow the user to scroll down until reach the bottom of the last post.
                 //       Without that the user also can reach the last post, however, to reach the bottom
                 //       of it is needed a scroll up.
-                ListFooterComponent={
-                    <>
-                        <Text>{"\n\n"}</Text>
-                        <ActivityIndicator style={{ padding: 16 }} />
-                    </>
-                }
+                ListFooterComponent={<Text>{"\n\n"}</Text>}
             />
         </View>
     );
@@ -291,5 +308,12 @@ const styles = StyleSheet.create({
         width: 24,
         height: 24,
         marginRight: 8,
+    },
+    postImage: {
+        width: '85%',
+        height: 400,
+        resizeMode: 'stretch',
+        marginLeft: 40,
+        borderRadius: 10,
     },
 });

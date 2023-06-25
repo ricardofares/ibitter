@@ -4,7 +4,6 @@ import CourseImage from '../../atoms/CourseImage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, Alert } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
-import { goToUserPage } from './user/User';
 
 const Drawer = createDrawerNavigator();
 
@@ -43,7 +42,7 @@ const CustomTimelineDrawerContent = ({ navigation }) => {
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback
-            onPress={() => {goToUserPage(state, state.user.username, navigation)}}
+            onPress={() => navigation.navigate('User', { choosenUser: state.user.username })}
           >
             <View style={styles.listItem}>
               <Image

@@ -9,7 +9,6 @@ import CourseImage from '../../atoms/CourseImage';
 import axios from 'axios';
 import { StyleSheet, View, Text, Alert, Keyboard, TouchableWithoutFeedback, Image, TouchableOpacity } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
-import { goToUserPage } from './user/User';
 
 export default function Reply({ navigation, route }) {
   const { state, dispatch } = useContext(IbitterContext);
@@ -105,7 +104,7 @@ export default function Reply({ navigation, route }) {
         ListHeaderComponent={
           <>
             <View style={styles.userInfoContainer}>
-              <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
+              <TouchableOpacity onPress={() => navigation.navigate('User', { choosenUser: post.username })}>
                 <CourseImage username={post.username} />
               </TouchableOpacity>
               <View style={{ marginLeft: 8, flexDirection: 'column', justifyContent: 'center' }} >
