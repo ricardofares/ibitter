@@ -7,7 +7,7 @@ import CourseImage from '../../atoms/CourseImage';
 import Header from '../../molecules/Header';
 import CreatePostIcon from './CreatePostIcon';
 import axios from 'axios';
-import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, ActivityIndicator, Platform } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
 import { goToUserPage } from './user/User';
@@ -86,10 +86,18 @@ export default function Timeline({ navigation, route }) {
   /// If an error occurs during the API request, the function catches the error and checks if it is a network error
   /// indicating the server being offline. In such cases, it displays an alert to the user, informing them about
   /// the server unavailability.
-  const loadMorePosts = async () => {
+  const loadMorePosts = async (newPosts) => {
     try {
+      let queryParameterConfiguration;
+
+      if (newPosts) {
+        queryParameterConfiguration = `untilAt=${posts[0].posted_at}`;
+      } else {
+        queryParameterConfiguration = `afterAt=${posts[posts.length - 1].posted_at}`;
+      }
+
       /// Construct the URL to fetch more posts using the apiUrl and query parameters.
-      const response = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}&afterAt=${posts[posts.length - 1].posted_at}`);
+      const response = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}&${queryParameterConfiguration}`);
 
       /// Send a GET request to the server to fetch the additional posts.
       const loadedPosts = response.data;
@@ -100,16 +108,27 @@ export default function Timeline({ navigation, route }) {
         return;
       }
 
-      setPosts([...posts, ...loadedPosts]);
+      if (newPosts) {
+        setPosts([...loadedPosts, ...posts]);
 
-      /// Dispatch an action to update the posts in the application state.
-      display({
-        type: 'UPDATE_POSTS',
-        payload: {
-          posts: [...posts, ...loadedPosts],
-        },
-      });
+        /// Dispatch an action to update the posts in the application state.
+        display({
+          type: 'UPDATE_POSTS',
+          payload: {
+            posts: [...loadedPosts, ...posts],
+          },
+        });
+      } else {
+        setPosts([...posts, ...loadedPosts]);
 
+        /// Dispatch an action to update the posts in the application state.
+        display({
+          type: 'UPDATE_POSTS',
+          payload: {
+            posts: [...posts, ...loadedPosts],
+          },
+        });
+      }
     } catch (e) {
       /// Handle errors that occur during the API request.
       /// Check if the error is due to the server being offline.
@@ -162,7 +181,7 @@ export default function Timeline({ navigation, route }) {
       }
       <View style={styles.postHeaderContainer}>
         <TouchableOpacity onPress={() => goToUserPage(state, post.username, navigation)}>
-        <CourseImage username={post.username} />
+          <CourseImage username={post.username} />
         </TouchableOpacity>
         <View style={{ marginLeft: 8, flexDirection: 'column' }}>
           <View style={{ flexDirection: 'row' }}>
@@ -230,7 +249,21 @@ export default function Timeline({ navigation, route }) {
             <ActivityIndicator style={{ padding: 16 }} />
           </>
         }
-        onEndReached={loadMorePosts}
+        onEndReached={() => loadMorePosts(false)}
+        onScrollEndDrag={event => {
+          /// The content offset threshold, that is, the minimum offset the content should have
+          /// in the flat list to indicate that the user would like to fetch newer posts.
+          const contentOffsetThreshold = Platform.OS === 'ios' ? -15.0 : 0.0;
+
+          /// If the user drag the flat list content upon a specified threshold. Then,
+          /// this will indicate that the user would like to fetch newer posts.
+          ///
+          /// \note Note in this case that should be used `<=` instead of `<`, since in Android
+          ///       devices the content offset is capped at 0.
+          if (event.nativeEvent.contentOffset.y <= contentOffsetThreshold)
+            loadMorePosts(true);
+        }}
+        scrollEventThrottle={1000}
       />
       <CreatePostIcon navigation={navigation} />
     </View>
