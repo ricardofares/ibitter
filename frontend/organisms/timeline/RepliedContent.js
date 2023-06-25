@@ -5,6 +5,7 @@ import CourseImage from '../../atoms/CourseImage';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
 import { timeDiff } from '../../utils';
+import UsernameToName from '../../atoms/Name';
 
 export default function RepliedContent({ navigation, repliedPostId }) {
   const { state } = useContext(IbitterContext);
@@ -73,13 +74,18 @@ export default function RepliedContent({ navigation, repliedPostId }) {
             <View style={styles.repliedContentContainer}>
               <View style={styles.postHeaderContainer}>
                 <CourseImage style={styles.userIcon} username={repliedPost.username} />
-                <Text style={styles.postHeaderUsername}>{repliedPost.username}</Text>
-                <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
+                <View style={{ marginLeft: 8, marginBottom: 8, }}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <UsernameToName style={{ fontWeight: 'bold', }} username={repliedPost.username} />
+                    <Text style={styles.postHeaderTime}>&#8226; {timeDiff(repliedPost.posted_at, new Date())}</Text>
+                  </View>
+                  <Text style={{ opacity: 0.5 }}>@{repliedPost.username}</Text>
+                </View>
               </View>
               {renderPostContent(repliedPost.content)}
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback >
       </>
     );
   }
@@ -94,10 +100,6 @@ const styles = StyleSheet.create({
   postHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  postHeaderUsername: {
-    fontWeight: 'bold',
-    marginLeft: 8,
   },
   postHeaderTime: {
     marginLeft: 8,
