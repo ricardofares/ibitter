@@ -18,6 +18,7 @@ export default function Timeline({ navigation, route }) {
 
   const [posts, setPosts] = useState([]);
   const [currentTab, setCurrentTab] = useState('ForYou');
+  const [followedPosts, setFollowedPosts] = useState([]);
 
   useEffect(() => {
     /// \brief Loads all the posts from the database using the API.
@@ -35,9 +36,11 @@ export default function Timeline({ navigation, route }) {
       try {
         // Send a GET request to the API endpoint to retrieve all the posts
         const postResponse = await axios.get(`${GlobalConfig.apiUrl}/posts?username=${state.user.username}`);
+        const followedPostsResponse = await axios.get(`${GlobalConfig.apiUrl}/followedPosts?username=${state.user.username}`);
 
-        // Send a GEET request to thte API endpoint to retrieve all the likes made by this user.
+        // Send a GET request to thte API endpoint to retrieve all the likes made by this user.
         const likesResponse = await axios.get(`${GlobalConfig.apiUrl}/getlike?username=${state.user.username}`);
+
 
         for (const post of postResponse.data) {
           post.i_liked = false;
@@ -47,8 +50,10 @@ export default function Timeline({ navigation, route }) {
               post.i_liked = true;
         }
 
+
         // Update the state of the component with the received post data.
         setPosts(postResponse.data);
+        setFollowedPosts(followedPostsResponse.data);
 
         dispatch({
           type: 'UPDATE_POSTS',
@@ -139,6 +144,62 @@ export default function Timeline({ navigation, route }) {
       }
     }
   };
+
+  const loadMoreFollowedPosts = async (newPosts) => {
+    try {
+      let queryParameterConfiguration;
+
+      if (newPosts) {
+        queryParameterConfiguration = `untilAt=${followedPosts[0].posted_at}`;
+      } else {
+        queryParameterConfiguration = `afterAt=${followedPosts[followedPosts.length - 1].posted_at}`;
+      }
+
+      /// Construct the URL to fetch more posts using the apiUrl and query parameters.
+      const response = await axios.get(`${GlobalConfig.apiUrl}/followedPosts?username=${state.user.username}&${queryParameterConfiguration}`);
+
+      /// Send a GET request to the server to fetch the additional posts.
+      const loadedPosts = response.data;
+
+      /// Check if there are no posts to be loaded from the database.
+      if (loadedPosts.length === 0) {
+        console.log('There is no more posts to be loaded');
+        return;
+      }
+
+      if (newPosts) {
+        setFollowedPosts([...loadedPosts, ...followedPosts]);
+
+        /// Dispatch an action to update the posts in the application state.
+        // display({
+        //   type: 'UPDATE_POSTS',
+        //   payload: {
+        //     posts: [...loadedPosts, ...posts],
+        //   },
+        // });
+      } else {
+        setFollowedPosts([...followedPosts, ...loadedPosts]);
+
+        /// Dispatch an action to update the posts in the application state.
+        // display({
+        //   type: 'UPDATE_POSTS',
+        //   payload: {
+        //     posts: [...posts, ...loadedPosts],
+        //   },
+        // });
+      }
+    } catch (e) {
+      /// Handle errors that occur during the API request.
+      /// Check if the error is due to the server being offline.
+      if (e.message === 'Network Error') {
+        /// Display an alert to the user informing them about the server being offline.
+        Alert.alert('Servidor Off-line', 'Parece que nossos servidores estão off-line, tente novamente mais tarde!');
+        return;
+      }
+    }
+  };
+
+  
 
   const renderPostContent = content => {
     const imageStartIndex = content.indexOf('[');
@@ -238,7 +299,7 @@ export default function Timeline({ navigation, route }) {
       </View>
       <FlatList
         style={{ height: '100%' }}
-        data={posts}
+        data={currentTab === 'Following' ? followedPosts : posts}
         renderItem={({ item }) => renderPost(item)}
         // @Hack A hack to allow the user to scroll down until reach the bottom of the last post.
         //       Without that the user also can reach the last post, however, to reach the bottom
@@ -249,7 +310,7 @@ export default function Timeline({ navigation, route }) {
             <ActivityIndicator style={{ padding: 16 }} />
           </>
         }
-        onEndReached={() => loadMorePosts(false)}
+        onEndReached={() => currentTab === 'ForYou' ? loadMorePosts(false) : loadMoreFollowedPosts(false)}
         onScrollEndDrag={event => {
           /// The content offset threshold, that is, the minimum offset the content should have
           /// in the flat list to indicate that the user would like to fetch newer posts.
@@ -261,7 +322,7 @@ export default function Timeline({ navigation, route }) {
           /// \note Note in this case that should be used `<=` instead of `<`, since in Android
           ///       devices the content offset is capped at 0.
           if (event.nativeEvent.contentOffset.y <= contentOffsetThreshold)
-            loadMorePosts(true);
+            currentTab === 'ForYou' ? loadMorePosts(true) : loadMoreFollowedPosts(true);
         }}
         scrollEventThrottle={1000}
       />
