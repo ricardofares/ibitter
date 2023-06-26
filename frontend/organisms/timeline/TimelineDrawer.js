@@ -1,6 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import TimelineStack from './TimelineStack';
 import CourseImage from '../../atoms/CourseImage';
+import GlobalConfig from '../../config';
+import axios from 'axios';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StyleSheet, View, Text, Image, TouchableWithoutFeedback, Alert } from 'react-native';
 import { IbitterContext } from '../providers/IbitterProvider';
@@ -9,6 +11,27 @@ const Drawer = createDrawerNavigator();
 
 const CustomTimelineDrawerContent = ({ navigation }) => {
   const { state } = useContext(IbitterContext);
+  const [followingInfo, setFollowingInfo] = useState({ followingCount: 0, followerCount: 0 });
+
+  useEffect(() => {
+    const loadFollowersInfo = async () => {
+      try {
+        const followingInfoResponse = await axios.get(`${GlobalConfig.apiUrl}/followersInfo?username=${state.user.username}`);
+
+        /// Update the following info.
+        setFollowingInfo(followingInfoResponse.data);
+      } catch (e) {
+        /// Catch unexpected error.
+        console.error(e);
+      }
+    };
+
+    const interval = setInterval(() => {
+      loadFollowersInfo();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View style={{ padding: 32 }}>
@@ -21,11 +44,11 @@ const CustomTimelineDrawerContent = ({ navigation }) => {
         <Text style={{ marginTop: 2, fontSize: 16, opacity: 0.5 }}>@{state.user.username}</Text>
         <View style={{ marginTop: 16, flexDirection: 'row', }}>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={{ fontWeight: 'bold', opacity: 0.75 }}>0 </Text>
+            <Text style={{ fontWeight: 'bold', opacity: 0.75 }}>{followingInfo.followingCount} </Text>
             <Text style={{ opacity: 0.5 }}>Seguindo</Text>
           </View>
           <View style={{ marginLeft: 16, flexDirection: 'row' }}>
-            <Text style={{ fontWeight: 'bold', opacity: 0.75 }}>0 </Text>
+            <Text style={{ fontWeight: 'bold', opacity: 0.75 }}>{followingInfo.followerCount} </Text>
             <Text style={{ opacity: 0.5 }}>Seguidores</Text>
           </View>
         </View>
