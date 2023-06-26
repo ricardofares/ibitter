@@ -22,10 +22,11 @@ module.exports = app => {
 
     // Fetches the `email` and `password` from the request body.
     const { email, password } = req.body;
+    const treatedEmail = email.toLowerCase()
 
     // Fetches the user with the specified email.
     const user = await app.knex('users')
-      .where('email', '=', email)
+      .where('email', '=', treatedEmail)
       .first();
 
     // Checks if the user with the specified email has not been found.
@@ -48,8 +49,11 @@ module.exports = app => {
       // Creates the token's payload.
       const payload = {
         id: user.id,
+	name: user.name,
         username: user.username,
-        email: user.email
+        email: user.email,
+	course: user.course,
+	avatar_url: user.avatar_url,
       };
 
       res.json({

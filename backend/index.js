@@ -45,6 +45,7 @@ app.use(cors({ origin: '*' }));
 require('./config/routes.js')(app);
 
 // Make the server starts to listen.
-app.listen(process.env.SERVER_PORT, () => {
+console.log(process.env.SERVER_PORT)
+app.listen(process.env.SERVER_PORT, '0.0.0.0', () => {
   console.log('Backend running 🚀️');
 });
