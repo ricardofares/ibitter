@@ -1,3 +1,5 @@
+##### Troque para [Português Brasileiro](./README.pt.md) 🇧🇷.
+
 # Ibitter: A Twitter-like Social Media App for University Students
 
 Welcome to the Ibitter GitHub repository! Ibitter is social media mobile application designed specifically for university students. Our goal is to provide a platform for students to connect, share their emotions, and exchange experiences within the university environment. Whether you're excited about a recent achievement or need a place to express your thoughts, Ibitter is here to enhance your university journey.
